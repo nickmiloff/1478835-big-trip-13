@@ -1,15 +1,15 @@
 import {createTripInfoContainerTemplate} from './view/trip-info-cantainer';
-import {createTripInfoTemplate} from './view/trip-info';
-import {createTripCostTemplate} from './view/trip-cost';
 import {createTripMenuTemplate} from './view/trip-menu';
 import {createTripFiltersTemplate} from './view/trip-filters';
 import {createTripSortTemplate} from './view/trip-sort';
 import {createTripEventsListTemplate} from './view/trip-events-list';
-import {createTripEventEditFormTemplate} from './view/trip-event-edit-form';
-import {createTripEventAddFormTemplate} from './view/trip-event-add-form';
+import {createTripEventFormTemplate} from './view/trip-event-form';
 import {createTripEventTemplate} from './view/trip-event';
+import {generateEvent} from './mock/event';
 
-const EVENTS_COUNT = 3;
+const EVENTS_COUNT = 20;
+
+const events = new Array(EVENTS_COUNT).fill().map(generateEvent).sort((a, b) => Date.parse(a.datetime[0]) - Date.parse(b.datetime[0]));
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 const siteMainElement = document.querySelector(`.page-main`);
@@ -21,12 +21,7 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-render(tripMainElement, createTripInfoContainerTemplate(), `afterbegin`);
-
-const tripInfoContainerElement = tripMainElement.querySelector(`.trip-main__trip-info`);
-
-render(tripInfoContainerElement, createTripInfoTemplate(), `beforeend`);
-render(tripInfoContainerElement, createTripCostTemplate(), `beforeend`);
+render(tripMainElement, createTripInfoContainerTemplate(events), `afterbegin`);
 
 render(tripControlElement, createTripMenuTemplate(), `beforeend`);
 render(tripControlElement, createTripFiltersTemplate(), `beforeend`);
@@ -36,9 +31,8 @@ render(tripEventsContainerElement, createTripEventsListTemplate(), `beforeend`);
 
 const tripEventsListElement = tripEventsContainerElement.querySelector(`.trip-events__list`);
 
-render(tripEventsListElement, createTripEventEditFormTemplate(), `beforeend`);
-render(tripEventsListElement, createTripEventAddFormTemplate(), `beforeend`);
+render(tripEventsListElement, createTripEventFormTemplate(events[0]), `beforeend`);
 
-for (let i = 0; i < EVENTS_COUNT; i++) {
-  render(tripEventsListElement, createTripEventTemplate(), `beforeend`);
+for (let i = 1; i < EVENTS_COUNT; i++) {
+  render(tripEventsListElement, createTripEventTemplate(events[i]), `beforeend`);
 }
