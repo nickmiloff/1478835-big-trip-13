@@ -7,7 +7,7 @@ import TripEventForm from './view/trip-event-form';
 import TripEvent from './view/trip-event';
 import EmptyListMessage from './view/empty-list-message';
 import {generateEvent} from './mock/event';
-import {render, RenderPosition} from './utils';
+import {isEscButton, render, RenderPosition} from './utils';
 
 const EVENTS_COUNT = 20;
 
@@ -25,17 +25,30 @@ const renderEvent = (eventsListElement, event) => {
     eventsListElement.replaceChild(eventFormComponent.getElement(), eventComponent.getElement());
   };
 
+  const eventEscKeydownHandler = (evt) => {
+    if (isEscButton(evt.key)) {
+      evt.preventDefault();
+      replaceFormToEvent();
+      document.removeEventListener(`keydown`, eventEscKeydownHandler);
+    }
+  };
+
   eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceEventToForm();
+    document.addEventListener(`keydown`, eventEscKeydownHandler);
   });
 
   eventFormComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
-    replaceFormToEvent();
+    // Определенный действия при отправке
   });
 
   eventFormComponent.getElement().querySelector(`form`).addEventListener(`reset`, (evt) => {
     evt.preventDefault();
+    // Определенные действия при обнулении
+  });
+
+  eventFormComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceFormToEvent();
   });
 
