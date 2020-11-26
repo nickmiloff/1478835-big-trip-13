@@ -57,12 +57,13 @@ const renderEvent = (eventsListElement, event) => {
 
 const renderEventsList = (containerElement, listEvents) => {
   if (listEvents && listEvents.length > 0) {
+    const tripEventsList = new TripEventsList();
+
     render(containerElement, new TripSort().getElement(), RenderPosition.BEFOREEND);
-    render(containerElement, new TripEventsList().getElement(), RenderPosition.BEFOREEND);
-    const tripEventsListElement = tripEventsContainerElement.querySelector(`.trip-events__list`);
+    render(containerElement, tripEventsList.getElement(), RenderPosition.BEFOREEND);
 
     for (let i = 0; i < EVENTS_COUNT; i++) {
-      renderEvent(tripEventsListElement, listEvents[i]);
+      renderEvent(tripEventsList.getElement(), listEvents[i]);
     }
   } else {
     render(containerElement, new EmptyListMessage().getElement(), RenderPosition.BEFOREEND);
