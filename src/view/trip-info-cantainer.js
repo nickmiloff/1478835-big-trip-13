@@ -1,7 +1,9 @@
+import Component from './component';
+
 import {createTripInfoTemplate} from './trip-info';
 import {createTripCostTemplate} from './trip-cost';
 
-export const createTripInfoContainerTemplate = (events) => {
+const createTripInfoContainerTemplate = (events) => {
   const cost = events.reduce((fullSum, event) => {
     const offersPrice = event.offers.reduce((sum, offer) => {
       sum += offer.checked ? offer.price : 0;
@@ -17,10 +19,21 @@ export const createTripInfoContainerTemplate = (events) => {
 
   const cities = Array.from(new Set(events.map((event) => event.city))).join(` &mdash; `);
 
-  return `
-    <section class="trip-main__trip-info  trip-info">
+  return (
+    `<section class="trip-main__trip-info  trip-info">
       ${createTripInfoTemplate(cities, firstDay, lastDay)}
       ${createTripCostTemplate(cost)}
-    </section>
-  `;
+    </section>`
+  );
 };
+
+export default class TripInfoContainer extends Component {
+  constructor(events) {
+    super();
+    this._events = events;
+  }
+
+  getTemplate() {
+    return this._events && this._events.length > 0 ? createTripInfoContainerTemplate(this._events) : ` `;
+  }
+}
