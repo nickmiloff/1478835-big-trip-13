@@ -45,7 +45,7 @@ export const getRandomElementsFromArr = (arr, minCount = 0, maxCount = 10) => {
   return result;
 };
 
-export const render = (container, element, place) => {
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);

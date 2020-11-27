@@ -40,7 +40,7 @@ const renderEvent = (eventsListElement, event) => {
 
   eventFormComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
-    // Определенный действия при отправке
+    replaceFormToEvent();
   });
 
   eventFormComponent.getElement().querySelector(`form`).addEventListener(`reset`, (evt) => {
@@ -52,21 +52,21 @@ const renderEvent = (eventsListElement, event) => {
     replaceFormToEvent();
   });
 
-  render(eventsListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventsListElement, eventComponent.getElement());
 };
 
 const renderEventsList = (containerElement, listEvents) => {
   if (listEvents && listEvents.length > 0) {
     const tripEventsList = new TripEventsList();
 
-    render(containerElement, new TripSort().getElement(), RenderPosition.BEFOREEND);
-    render(containerElement, tripEventsList.getElement(), RenderPosition.BEFOREEND);
+    render(containerElement, new TripSort().getElement());
+    render(containerElement, tripEventsList.getElement());
 
-    for (let i = 0; i < EVENTS_COUNT; i++) {
-      renderEvent(tripEventsList.getElement(), listEvents[i]);
-    }
+    listEvents.forEach((event) => {
+      renderEvent(tripEventsList.getElement(), event);
+    });
   } else {
-    render(containerElement, new EmptyListMessage().getElement(), RenderPosition.BEFOREEND);
+    render(containerElement, new EmptyListMessage().getElement());
   }
 };
 
@@ -79,5 +79,5 @@ const tripEventsContainerElement = siteMainElement.querySelector(`.trip-events`)
 
 render(tripMainElement, new TripInfoContainer(events).getElement(), RenderPosition.AFTERBEGIN);
 render(tripSortHeaderElement, new TripMenu().getElement(), RenderPosition.AFTEREND);
-render(tripControlElement, new TripFilters().getElement(), RenderPosition.BEFOREEND);
+render(tripControlElement, new TripFilters().getElement());
 renderEventsList(tripEventsContainerElement, events);
