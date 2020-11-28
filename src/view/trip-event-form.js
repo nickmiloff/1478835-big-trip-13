@@ -1,11 +1,13 @@
+import Component from './component';
+
 import dayjs from 'dayjs';
 import {createEventFormOffersListTemplate} from './event-form-offers-list';
 import {createEventFormDestinationTemplate} from './event-form-destination';
 
-export const createTripEventFormTemplate = (tripInfo) => {
+const createTripEventFormTemplate = (tripInfo = {}) => {
   const {type = `Taxi`, city = `Amsterdam`, offers = [], price = ``, datetime = [`2020-11-19`, `2020-11-20`], destination = null} = tripInfo;
-  return `
-    <li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -102,12 +104,24 @@ export const createTripEventFormTemplate = (tripInfo) => {
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">${tripInfo === {} ? `Delete` : `Cancel`}</button>
+          ${tripInfo !== {} ? `<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>` : ``}
         </header>
         <section class="event__details">
           ${offers.length > 0 ? createEventFormOffersListTemplate(offers) : ``}
           ${destination ? createEventFormDestinationTemplate(destination) : ``}
         </section>
       </form>
-    </li>
-  `;
+    </li>`
+  );
 };
+
+export default class TripEventForm extends Component {
+  constructor(info) {
+    super();
+    this._info = info;
+  }
+
+  getTemplate() {
+    return createTripEventFormTemplate(this._info);
+  }
+}

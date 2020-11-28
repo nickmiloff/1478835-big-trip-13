@@ -1,35 +1,12 @@
+import Component from './component';
+
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-dayjs.extend(duration);
+import {toFormatTimeDiff} from './../utils';
 import {createEventOfferTemplate} from './event-offer';
 
-// Ф-ия ниже проста ужасна XD Я не знаю что с ней делать...
-const toTimeDiff = (from, to) => {
-  const ms = dayjs(to).diff(dayjs(from));
-  const eventDuration = dayjs.duration(ms);
-
-  const Durations = {
-    days: Math.floor(eventDuration.asDays()),
-    hours: eventDuration.hours(),
-    minutes: eventDuration.minutes()
-  };
-
-  const days = Durations.days < 10 ? `0${Durations.days}D` : `${Durations.days}D`;
-  const hours = Durations.hours < 10 ? `0${Durations.hours}H` : `${Durations.hours}H`;
-  const minutes = Durations.minutes < 10 ? `0${Durations.minutes}M` : `${Durations.minutes}M`;
-
-  if (days !== `00D`) {
-    return `${days} ${hours} ${minutes}`;
-  }
-  if (hours !== `00H`) {
-    return `${hours} ${minutes}`;
-  }
-  return `${minutes}`;
-};
-
-export const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorite}) => {
-  return `
-    <li class="trip-events__item">
+const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorite}) => {
+  return (
+    `<li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="${dayjs(datetime[0]).format(`YYYY-MM-DD`)}">${dayjs(datetime[0]).format(`MMM DD`).toUpperCase()}</time>
         <div class="event__type">
@@ -42,7 +19,7 @@ export const createTripEventTemplate = ({type, city, offers, price, datetime, is
             &mdash;
             <time class="event__end-time" datetime="${dayjs(datetime[1]).format(`YYYY-MM-DDTHH:mm`)}">${dayjs(datetime[1]).format(`HH:mm`)}</time>
           </p>
-          <p class="event__duration">${toTimeDiff(datetime[0], datetime[1])}</p>
+          <p class="event__duration">${toFormatTimeDiff(datetime[0], datetime[1])}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${price}</span>
@@ -61,6 +38,17 @@ export const createTripEventTemplate = ({type, city, offers, price, datetime, is
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>
-  `;
+    </li>`
+  );
 };
+
+export default class TripEvent extends Component {
+  constructor(info) {
+    super();
+    this._info = info;
+  }
+
+  getTemplate() {
+    return createTripEventTemplate(this._info);
+  }
+}
