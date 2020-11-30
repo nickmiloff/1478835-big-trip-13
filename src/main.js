@@ -7,7 +7,8 @@ import TripEventForm from './view/trip-event-form';
 import TripEvent from './view/trip-event';
 import EmptyListMessage from './view/empty-list-message';
 import {generateEvent} from './mock/event';
-import {isEscButton, render, RenderPosition} from './utils';
+import {render, RenderPosition, replace} from './utils/render';
+import {isEscButton} from './utils/common';
 
 const EVENTS_COUNT = 20;
 
@@ -18,55 +19,54 @@ const renderEvent = (eventsListElement, event) => {
   const eventFormComponent = new TripEventForm(event);
 
   const replaceFormToEvent = () => {
-    eventsListElement.replaceChild(eventComponent.getElement(), eventFormComponent.getElement());
+    replace(eventComponent, eventFormComponent);
+    document.removeEventListener(`keydown`, eventEscKeydownHandler);
   };
 
   const replaceEventToForm = () => {
-    eventsListElement.replaceChild(eventFormComponent.getElement(), eventComponent.getElement());
+    replace(eventFormComponent, eventComponent);
+    document.addEventListener(`keydown`, eventEscKeydownHandler);
   };
 
   const eventEscKeydownHandler = (evt) => {
     if (isEscButton(evt.key)) {
       evt.preventDefault();
       replaceFormToEvent();
-      document.removeEventListener(`keydown`, eventEscKeydownHandler);
     }
   };
 
-  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.setEditClickHandler(() => {
     replaceEventToForm();
-    document.addEventListener(`keydown`, eventEscKeydownHandler);
   });
 
-  eventFormComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventFormComponent.setFormSubmitHandler(() => {
     replaceFormToEvent();
   });
 
-  eventFormComponent.getElement().querySelector(`form`).addEventListener(`reset`, (evt) => {
-    evt.preventDefault();
+  eventFormComponent.setFormResetHandler(() => {
+    replaceFormToEvent();
     // Определенные действия при обнулении
   });
 
-  eventFormComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventFormComponent.setCloseButtonClickHandler(() => {
     replaceFormToEvent();
   });
 
-  render(eventsListElement, eventComponent.getElement());
+  render(eventsListElement, eventComponent);
 };
 
 const renderEventsList = (containerElement, listEvents) => {
   if (listEvents && listEvents.length > 0) {
     const tripEventsList = new TripEventsList();
 
-    render(containerElement, new TripSort().getElement());
-    render(containerElement, tripEventsList.getElement());
+    render(containerElement, new TripSort());
+    render(containerElement, tripEventsList);
 
     listEvents.forEach((event) => {
-      renderEvent(tripEventsList.getElement(), event);
+      renderEvent(tripEventsList, event);
     });
   } else {
-    render(containerElement, new EmptyListMessage().getElement());
+    render(containerElement, new EmptyListMessage());
   }
 };
 
@@ -77,7 +77,7 @@ const tripControlElement = siteHeaderElement.querySelector(`.trip-main__trip-con
 const tripSortHeaderElement = tripControlElement.querySelector(`h2:first-child`);
 const tripEventsContainerElement = siteMainElement.querySelector(`.trip-events`);
 
-render(tripMainElement, new TripInfoContainer(events).getElement(), RenderPosition.AFTERBEGIN);
-render(tripSortHeaderElement, new TripMenu().getElement(), RenderPosition.AFTEREND);
-render(tripControlElement, new TripFilters().getElement());
+render(tripMainElement, new TripInfoContainer(events), RenderPosition.AFTERBEGIN);
+render(tripSortHeaderElement, new TripMenu(), RenderPosition.AFTEREND);
+render(tripControlElement, new TripFilters());
 renderEventsList(tripEventsContainerElement, events);

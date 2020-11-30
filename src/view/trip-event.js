@@ -1,7 +1,7 @@
 import Component from './component';
 
 import dayjs from 'dayjs';
-import {toFormatTimeDiff} from './../utils';
+import {toFormatTimeDiff} from './../utils/datetime';
 import {createEventOfferTemplate} from './event-offer';
 
 const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorite}) => {
@@ -46,9 +46,20 @@ export default class TripEvent extends Component {
   constructor(info) {
     super();
     this._info = info;
+    this._editClickHandler = this._editClickHandler.bind(this);
+  }
+
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
   getTemplate() {
     return createTripEventTemplate(this._info);
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
   }
 }
