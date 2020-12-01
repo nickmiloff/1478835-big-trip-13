@@ -1,8 +1,13 @@
-import {createElement} from './../utils';
+import {createElement} from './../utils/render';
 
 export default class Component {
   constructor() {
+    if (new.target === Component) {
+      throw new Error(`Невозможно создать экземпляр Component, только наследование`);
+    }
+
     this._element = null;
+    this._callback = {};
   }
 
   getTemplate() {

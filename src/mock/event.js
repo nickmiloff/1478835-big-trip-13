@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getRandomInteger, getRandomElementFromArr, getRandomElementsFromArr} from '../utils';
+import {getRandomInteger, getRandomElementFromArr, getRandomElementsFromArr} from '../utils/common';
 
 const Mocks = {
   types: [
