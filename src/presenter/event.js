@@ -23,6 +23,7 @@ export default class EventPresenter {
     this._replaceEventToForm = this._replaceEventToForm.bind(this);
     this._replaceFormToEvent = this._replaceFormToEvent.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   init(event) {
@@ -37,9 +38,7 @@ export default class EventPresenter {
     this._eventComponent.setEditClickHandler(this._replaceEventToForm);
     this._eventComponent.setFavoriteClickHandler(this._favoriteClickHandler);
 
-    this._formComponent.setFormSubmitHandler(() => {
-      this._formSubmitHandler();
-    });
+    this._formComponent.setFormSubmitHandler(this._formSubmitHandler);
 
     this._formComponent.setFormResetHandler(() => {
       this._replaceFormToEvent();
@@ -103,5 +102,8 @@ export default class EventPresenter {
     );
   }
 
-  _formSubmitHandler() {}
+  _formSubmitHandler(event) {
+    this._changeData(event);
+    this._replaceFormToEvent();
+  }
 }
