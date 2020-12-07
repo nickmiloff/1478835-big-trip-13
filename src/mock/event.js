@@ -78,6 +78,8 @@ const Mocks = {
   }
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateOffers = () => {
   const {list, min, max} = Mocks.offers;
 
@@ -123,6 +125,7 @@ const generateDatetime = () => {
 
 export const generateEvent = () => {
   return {
+    id: generateId(),
     type: getRandomElementFromArr(Mocks.types),
     city: getRandomElementFromArr(Mocks.cities),
     offers: generateOffers(),
