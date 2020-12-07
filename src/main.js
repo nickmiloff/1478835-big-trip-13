@@ -1,4 +1,4 @@
-import TripInfoContainer from './view/trip-info-cantainer';
+import TripInfoContainer from './view/trip-info-container';
 import TripMenu from './view/trip-menu';
 import TripFilters from './view/trip-filters';
 import TripSort from './view/trip-sort';
