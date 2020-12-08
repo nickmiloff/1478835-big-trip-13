@@ -1,5 +1,11 @@
 import Component from './component';
 
+export const SortType = {
+  DAY: `sort-day`,
+  TIME: `sort-time`,
+  PRICE: `sort-price`
+};
+
 const createTripSortTemplate = () => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -32,7 +38,24 @@ const createTripSortTemplate = () => {
 };
 
 export default class TripSort extends Component {
+  constructor() {
+    super();
+
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+  }
+
   getTemplate() {
     return createTripSortTemplate();
+  }
+
+  _sortTypeChangeHandler(evt) {
+    if (evt.target.tagName === `INPUT`) {
+      this._callback.sortTypeChange(evt.target.value);
+    }
+  }
+
+  setSortTypeChangeHandler(callback) {
+    this._callback.sortTypeChange = callback;
+    this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
 }

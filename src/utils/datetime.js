@@ -4,23 +4,15 @@ dayjs.extend(duration);
 
 export const toFormatTimeDiff = (from, to) => {
   const ms = dayjs(to).diff(dayjs(from));
-  const eventDuration = dayjs.duration(ms);
+  const eventDuration = dayjs.duration(ms).format(`DD[D] HH[H] mm[M]`);
 
-  const Durations = {
-    days: Math.floor(eventDuration.asDays()),
-    hours: eventDuration.hours(),
-    minutes: eventDuration.minutes()
-  };
-
-  const days = Durations.days < 10 ? `0${Durations.days}D` : `${Durations.days}D`;
-  const hours = Durations.hours < 10 ? `0${Durations.hours}H` : `${Durations.hours}H`;
-  const minutes = Durations.minutes < 10 ? `0${Durations.minutes}M` : `${Durations.minutes}M`;
-
-  if (days !== `00D`) {
-    return `${days} ${hours} ${minutes}`;
+  if (!eventDuration.startsWith(`00D`)) {
+    return eventDuration;
   }
-  if (hours !== `00H`) {
-    return `${hours} ${minutes}`;
+  if (!eventDuration.startsWith(`00D 00H`)) {
+    return eventDuration.replace(`00D `, ``);
   }
-  return `${minutes}`;
+  return eventDuration.replace(`00D 00H `, ``);
 };
+
+export const toHoursTimeDiff = (from, to) => dayjs(from).hour() === dayjs(to).hour() ? dayjs(from).minute() - dayjs(to).minute() : dayjs(from).hour() - dayjs(to).hour();
