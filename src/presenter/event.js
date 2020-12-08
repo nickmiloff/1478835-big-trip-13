@@ -15,8 +15,9 @@ export default class EventPresenter {
     this._changeData = changeData;
     this._changeMode = changeMode;
 
+    this._event = null;
     this._eventComponent = null;
-    this._formComponent = null;
+    this._eventComponentEdit = null;
     this._mode = Mode.DEFAULT;
 
     this._eventEscKeydownHandler = this._eventEscKeydownHandler.bind(this);
@@ -30,23 +31,23 @@ export default class EventPresenter {
     this._event = event;
 
     const prevEventComponent = this._eventComponent;
-    const prevFormComponent = this._formComponent;
+    const prevEventComponentEdit = this._eventComponentEdit;
 
-    this._eventComponent = new TripEvent(event);
-    this._formComponent = new TripEventForm(event);
+    this._eventComponent = new TripEvent(this._event);
+    this._eventComponentEdit = new TripEventForm(this._event);
 
     this._eventComponent.setEditClickHandler(this._replaceEventToForm);
     this._eventComponent.setFavoriteClickHandler(this._favoriteClickHandler);
 
-    this._formComponent.setFormSubmitHandler(this._formSubmitHandler);
+    this._eventComponentEdit.setFormSubmitHandler(this._formSubmitHandler);
 
-    this._formComponent.setFormResetHandler(() => {
+    this._eventComponentEdit.setFormResetHandler(() => {
       this._replaceFormToEvent();
     });
 
-    this._formComponent.setCloseButtonClickHandler(this._replaceFormToEvent);
+    this._eventComponentEdit.setCloseButtonClickHandler(this._replaceFormToEvent);
 
-    if (prevEventComponent === null || prevFormComponent === null) {
+    if (prevEventComponent === null || prevEventComponentEdit === null) {
       render(this._container, this._eventComponent);
       return;
     }
@@ -56,16 +57,16 @@ export default class EventPresenter {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._formComponent, prevFormComponent);
+      replace(this._eventComponentEdit, prevEventComponentEdit);
     }
 
     remove(prevEventComponent);
-    remove(prevFormComponent);
+    remove(prevEventComponentEdit);
   }
 
   destroy() {
     remove(this._eventComponent);
-    remove(this._formComponent);
+    remove(this._eventComponentEdit);
   }
 
   resetView() {
@@ -82,14 +83,14 @@ export default class EventPresenter {
   }
 
   _replaceEventToForm() {
-    replace(this._formComponent, this._eventComponent);
+    replace(this._eventComponentEdit, this._eventComponent);
     document.addEventListener(`keydown`, this._eventEscKeydownHandler);
     this._changeMode();
     this._mode = Mode.EDITING;
   }
 
   _replaceFormToEvent() {
-    replace(this._eventComponent, this._formComponent);
+    replace(this._eventComponent, this._eventComponentEdit);
     document.removeEventListener(`keydown`, this._eventEscKeydownHandler);
     this._mode = Mode.DEFAULT;
   }

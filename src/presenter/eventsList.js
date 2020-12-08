@@ -9,6 +9,7 @@ export default class EventsList {
   constructor(container) {
     this._container = container;
 
+    this._events = [];
     this._eventPresenter = {};
     this._listComponent = new TripEventsList();
     this._sortComponent = new TripSort();
@@ -61,11 +62,11 @@ export default class EventsList {
   }
 
   _renderEventsList() {
-    if (this._events && this._events.length > 0) {
+    if (this._events && this._events .length > 0) {
       this._renderSort();
       this._renderList();
 
-      this._events.forEach((event) => {
+      this._events .forEach((event) => {
         this._renderEvent(event);
       });
     } else {
