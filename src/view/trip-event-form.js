@@ -1,8 +1,55 @@
 import Component from './component';
-
 import dayjs from 'dayjs';
-import {createEventFormOffersListTemplate} from './event-form-offers-list';
-import {createEventFormDestinationTemplate} from './event-form-destination';
+
+const createEventFormOfferTemplate = ({title, price, checked}) => {
+  return (
+    `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}-1" type="checkbox" name="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}"${checked ? `checked` : ``}>
+      <label class="event__offer-label" for="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}-1">
+        <span class="event__offer-title">${title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${price}</span>
+      </label>
+    </div>`
+  );
+};
+
+const createEventFormOffersListTemplate = (offers) => {
+  return (
+    `<section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">${offers.map(createEventFormOfferTemplate).join(``)}</div>
+    </section>`
+  );
+};
+
+const createEventDestinationDescriptionTemplate = (description) => {
+  return `<p class="event__destination-description">${description}</p>`;
+};
+
+const createEventPhotoTemplate = (photoUrl) => {
+  return `<img class="event__photo" src="${photoUrl}" alt="Event photo">`;
+};
+
+const createEventPhotosListTemplate = (photos) => {
+  return (
+    `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${photos.map(createEventPhotoTemplate).join(``)}
+      </div>
+    </div>`
+  );
+};
+
+const createEventFormDestinationTemplate = ({description = ``, photos = []}) => {
+  return (
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      ${description && description !== `` ? createEventDestinationDescriptionTemplate(description) : ``}
+      ${photos.length > 0 ? createEventPhotosListTemplate(photos) : ``}
+    </section>`
+  );
+};
 
 const createTripEventFormTemplate = (tripInfo = {}) => {
   const {type = `Taxi`, city = `Amsterdam`, offers = [], price = ``, datetime = [`2020-11-19`, `2020-11-20`], destination = null} = tripInfo;
@@ -126,7 +173,7 @@ export default class TripEventForm extends Component {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._info);
   }
 
   _formResetHandler(evt) {
