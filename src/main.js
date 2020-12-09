@@ -7,7 +7,7 @@ import {render, RenderPosition} from './utils/render';
 
 const EVENTS_COUNT = 20;
 
-const events = new Array(EVENTS_COUNT).fill().map(generateEvent).sort((a, b) => Date.parse(a.datetime[0]) - Date.parse(b.datetime[0]));
+const events = new Array(EVENTS_COUNT).fill().map(generateEvent);
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 const siteMainElement = document.querySelector(`.page-main`);
