@@ -3,16 +3,16 @@ import {getRandomInteger, getRandomElementFromArr, getRandomElementsFromArr} fro
 
 const Mocks = {
   types: [
-    `Taxi`,
-    `Bus`,
-    `Train`,
-    `Ship`,
-    `Transport`,
-    `Drive`,
-    `Flight`,
-    `Check-in`,
-    `Sightseeing`,
-    `Restaurant`
+    `taxi`,
+    `bus`,
+    `train`,
+    `ship`,
+    `transport`,
+    `drive`,
+    `flight`,
+    `check-in`,
+    `sightseeing`,
+    `restaurant`
   ],
   cities: [
     `Chamonix`,
@@ -90,7 +90,7 @@ const generateOffers = () => {
   });
 };
 
-const generateDestination = () => {
+export const generateDestination = () => {
   const {list, min: minDescCount, max: maxDescCount} = Mocks.suggestions.description;
   const {min: minImgsCount, max: maxImgsCount} = Mocks.suggestions.images;
 
