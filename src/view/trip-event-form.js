@@ -133,7 +133,8 @@ export default class TripEventForm extends Smart {
   constructor(data) {
     super();
     this._data = data;
-    this._datepicker = null;
+    this._startTimeDatepicker = null;
+    this._endTimeDatepicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formResetHandler = this._formResetHandler.bind(this);
@@ -145,16 +146,21 @@ export default class TripEventForm extends Smart {
     this._eventPriceInputHandler = this._eventPriceInputHandler.bind(this);
 
     this._setInnerHandlers();
-    this._setDatepicker();
+    this._setDatepickers();
   }
 
-  _setDatepicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
+  _setDatepickers() {
+    if (this._startTimeDatepicker) {
+      this._startTimeDatepicker.destroy();
+      this._startTimeDatepicker = null;
     }
 
-    this._datepicker = flatpickr(
+    if (this._endTimeDatepicker) {
+      this._endTimeDatepicker.destroy();
+      this._endTimeDatepicker = null;
+    }
+
+    this._startTimeDatepicker = flatpickr(
         this.getElement().querySelector(`#event-start-time-1`),
         {
           enableTime: true,
@@ -165,7 +171,7 @@ export default class TripEventForm extends Smart {
         }
     );
 
-    this._datepicker = flatpickr(
+    this._endTimeDatepicker = flatpickr(
         this.getElement().querySelector(`#event-end-time-1`),
         {
           enableTime: true,
@@ -212,13 +218,17 @@ export default class TripEventForm extends Smart {
   _startTimeChangeHandler([userDate]) {
     this.updateData({
       datetime: [userDate, this._data.datetime[1]]
-    });
+    }, true);
+
+    this._endTimeDatepicker.set(`minDate`, userDate);
   }
 
   _endTimeChangeHandler([userDate]) {
     this.updateData({
       datetime: [this._data.datetime[0], userDate]
-    });
+    }, true);
+
+    this._startTimeDatepicker.set(`maxDate`, userDate);
   }
 
   _eventTypeChangeHandler(evt) {
@@ -268,7 +278,7 @@ export default class TripEventForm extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this._setDatepicker();
+    this._setDatepickers();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormResetHandler(this._callback.formReset);
