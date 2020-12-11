@@ -1,19 +1,7 @@
 import Smart from './smart';
 import dayjs from 'dayjs';
 import {generateDestination} from './../mock/event';
-
-const Types = [
-  `taxi`,
-  `bus`,
-  `train`,
-  `ship`,
-  `transport`,
-  `drive`,
-  `flight`,
-  `check-in`,
-  `sightseeing`,
-  `restaurant`
-];
+import {Types} from './../utils/const';
 
 const createEventFormOfferTemplate = ({title, price, checked}) => {
   return (
@@ -148,13 +136,21 @@ export default class TripEventForm extends Smart {
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._eventPriceInputHandler = this._eventPriceInputHandler.bind(this);
-    this._eventOfferClickHandler = this._eventOfferClickHandler.bind(this);
 
     this._setInnerHandlers();
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+
+    const newOffers = [...this._data.offers];
+
+    this.getElement()
+      .querySelectorAll(`.event__offer-checkbox`)
+      .forEach((offer, i) => {
+        newOffers[i].checked = offer.checked;
+      });
+
     this._callback.formSubmit(TripEventForm.parseDataToEvent(this._data));
   }
 
@@ -190,29 +186,6 @@ export default class TripEventForm extends Smart {
     }, true);
   }
 
-  _eventOfferClickHandler(evt) {
-    if (evt.target.classList.contains(`event__offer-checkbox`)) {
-      const bufferedName = evt.target.name.replace(`event-offer-`, ``).replaceAll(`-`, ` `);
-      const offerName = bufferedName[0].toUpperCase() + bufferedName.slice(1);
-      const offerIndex = this._data.offers.findIndex((elem) => elem.title === offerName);
-      const newOffer = Object.assign(
-          {},
-          this._data.offers[offerIndex],
-          {
-            checked: !this._data.offers[offerIndex].checked
-          }
-      );
-
-      this.updateData({
-        offers: [
-          ...this._data.offers.slice(0, offerIndex),
-          newOffer,
-          ...this._data.offers.slice(offerIndex + 1)
-        ]
-      }, true);
-    }
-  }
-
   getTemplate() {
     return createTripEventFormTemplate(TripEventForm.parseEventToData(this._data));
   }
@@ -233,8 +206,6 @@ export default class TripEventForm extends Smart {
   }
 
   _setInnerHandlers() {
-    const offersNode = this.getElement().querySelector(`.event__section--offers`);
-
     this.getElement()
       .querySelector(`.event__input--destination`)
       .addEventListener(`change`, this._destinationChangeHandler);
@@ -244,10 +215,6 @@ export default class TripEventForm extends Smart {
     this.getElement()
       .querySelector(`.event__input--price`)
       .addEventListener(`input`, this._eventPriceInputHandler);
-
-    if (offersNode) {
-      offersNode.addEventListener(`click`, this._eventOfferClickHandler);
-    }
   }
 
   restoreHandlers() {
