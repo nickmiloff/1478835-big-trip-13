@@ -1,4 +1,5 @@
 import Component from './component';
+import {sortByDay} from './../utils/sort';
 import dayjs from 'dayjs';
 
 const createTripInfoTemplate = (cities = ``, firstDay, lastDay) => {
@@ -35,8 +36,10 @@ const createTripInfoContainerTemplate = (events) => {
     return fullSum;
   }, 0);
 
-  const firstDay = events[0].datetime[0];
-  const lastDay = events[events.length - 1].datetime[1];
+  const sortedEvents = [...events].sort(sortByDay);
+
+  const firstDay = sortedEvents[0].datetime[0];
+  const lastDay = sortedEvents[sortedEvents.length - 1].datetime[1];
 
   const cities = Array.from(new Set(events.map((event) => event.city))).join(` &mdash; `);
 

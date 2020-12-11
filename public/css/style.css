@@ -637,6 +637,7 @@ main {
   padding: 5px 10px 5px 62px;
   font-size: 17px;
   line-height: 21px;
+  text-transform: capitalize;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
