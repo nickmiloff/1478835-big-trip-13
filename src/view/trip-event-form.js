@@ -1,5 +1,8 @@
 import Smart from './smart';
 import dayjs from 'dayjs';
+import flatpickr from 'flatpickr';
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+
 import {generateDestination} from './../mock/event';
 import {Types} from './../utils/const';
 
@@ -130,14 +133,48 @@ export default class TripEventForm extends Smart {
   constructor(data) {
     super();
     this._data = data;
+    this._datepicker = null;
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formResetHandler = this._formResetHandler.bind(this);
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+    this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
+    this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._eventPriceInputHandler = this._eventPriceInputHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepicker();
+  }
+
+  _setDatepicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `y/m/d H:i`,
+          maxDate: this._data.datetime[1],
+          defaultDate: this._data.datetime[0],
+          onChange: this._startTimeChangeHandler
+        }
+    );
+
+    this._datepicker = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `y/m/d H:i`,
+          minDate: this._data.datetime[0],
+          defaultDate: this._data.datetime[1],
+          onChange: this._endTimeChangeHandler
+        }
+    );
   }
 
   _formSubmitHandler(evt) {
@@ -169,6 +206,18 @@ export default class TripEventForm extends Smart {
     this.updateData({
       city: evt.target.value,
       destination: generateDestination()
+    });
+  }
+
+  _startTimeChangeHandler([userDate]) {
+    this.updateData({
+      datetime: [userDate, this._data.datetime[1]]
+    });
+  }
+
+  _endTimeChangeHandler([userDate]) {
+    this.updateData({
+      datetime: [this._data.datetime[0], userDate]
     });
   }
 
@@ -219,6 +268,7 @@ export default class TripEventForm extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormResetHandler(this._callback.formReset);
