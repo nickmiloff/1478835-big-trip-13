@@ -1,19 +1,9 @@
 import dayjs from 'dayjs';
 import {getRandomInteger, getRandomElementFromArr, getRandomElementsFromArr} from '../utils/common';
+import {Types} from '../utils/const';
 
 const Mocks = {
-  types: [
-    `taxi`,
-    `bus`,
-    `train`,
-    `ship`,
-    `transport`,
-    `drive`,
-    `flight`,
-    `check-in`,
-    `sightseeing`,
-    `restaurant`
-  ],
+  types: [...Types],
   cities: [
     `Chamonix`,
     `Geneva`,

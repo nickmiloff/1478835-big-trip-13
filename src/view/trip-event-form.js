@@ -1,19 +1,10 @@
 import Smart from './smart';
 import dayjs from 'dayjs';
-import {generateDestination} from './../mock/event';
+import flatpickr from 'flatpickr';
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
-const Types = [
-  `taxi`,
-  `bus`,
-  `train`,
-  `ship`,
-  `transport`,
-  `drive`,
-  `flight`,
-  `check-in`,
-  `sightseeing`,
-  `restaurant`
-];
+import {generateDestination} from './../mock/event';
+import {Types} from './../utils/const';
 
 const createEventFormOfferTemplate = ({title, price, checked}) => {
   return (
@@ -142,19 +133,67 @@ export default class TripEventForm extends Smart {
   constructor(data) {
     super();
     this._data = data;
+    this._startTimeDatepicker = null;
+    this._endTimeDatepicker = null;
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formResetHandler = this._formResetHandler.bind(this);
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+    this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
+    this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._eventPriceInputHandler = this._eventPriceInputHandler.bind(this);
-    this._eventOfferClickHandler = this._eventOfferClickHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepickers();
+  }
+
+  _setDatepickers() {
+    if (this._startTimeDatepicker) {
+      this._startTimeDatepicker.destroy();
+      this._startTimeDatepicker = null;
+    }
+
+    if (this._endTimeDatepicker) {
+      this._endTimeDatepicker.destroy();
+      this._endTimeDatepicker = null;
+    }
+
+    this._startTimeDatepicker = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `y/m/d H:i`,
+          maxDate: this._data.datetime[1],
+          defaultDate: this._data.datetime[0],
+          onChange: this._startTimeChangeHandler
+        }
+    );
+
+    this._endTimeDatepicker = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `y/m/d H:i`,
+          minDate: this._data.datetime[0],
+          defaultDate: this._data.datetime[1],
+          onChange: this._endTimeChangeHandler
+        }
+    );
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+
+    const newOffers = [...this._data.offers];
+
+    this.getElement()
+      .querySelectorAll(`.event__offer-checkbox`)
+      .forEach((offer, i) => {
+        newOffers[i].checked = offer.checked;
+      });
+
     this._callback.formSubmit(TripEventForm.parseDataToEvent(this._data));
   }
 
@@ -176,6 +215,22 @@ export default class TripEventForm extends Smart {
     });
   }
 
+  _startTimeChangeHandler([userDate]) {
+    this.updateData({
+      datetime: [userDate, this._data.datetime[1]]
+    }, true);
+
+    this._endTimeDatepicker.set(`minDate`, userDate);
+  }
+
+  _endTimeChangeHandler([userDate]) {
+    this.updateData({
+      datetime: [this._data.datetime[0], userDate]
+    }, true);
+
+    this._startTimeDatepicker.set(`maxDate`, userDate);
+  }
+
   _eventTypeChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({
@@ -188,29 +243,6 @@ export default class TripEventForm extends Smart {
     this.updateData({
       price: evt.target.value
     }, true);
-  }
-
-  _eventOfferClickHandler(evt) {
-    if (evt.target.classList.contains(`event__offer-checkbox`)) {
-      const bufferedName = evt.target.name.replace(`event-offer-`, ``).replaceAll(`-`, ` `);
-      const offerName = bufferedName[0].toUpperCase() + bufferedName.slice(1);
-      const offerIndex = this._data.offers.findIndex((elem) => elem.title === offerName);
-      const newOffer = Object.assign(
-          {},
-          this._data.offers[offerIndex],
-          {
-            checked: !this._data.offers[offerIndex].checked
-          }
-      );
-
-      this.updateData({
-        offers: [
-          ...this._data.offers.slice(0, offerIndex),
-          newOffer,
-          ...this._data.offers.slice(offerIndex + 1)
-        ]
-      }, true);
-    }
   }
 
   getTemplate() {
@@ -233,8 +265,6 @@ export default class TripEventForm extends Smart {
   }
 
   _setInnerHandlers() {
-    const offersNode = this.getElement().querySelector(`.event__section--offers`);
-
     this.getElement()
       .querySelector(`.event__input--destination`)
       .addEventListener(`change`, this._destinationChangeHandler);
@@ -244,14 +274,11 @@ export default class TripEventForm extends Smart {
     this.getElement()
       .querySelector(`.event__input--price`)
       .addEventListener(`input`, this._eventPriceInputHandler);
-
-    if (offersNode) {
-      offersNode.addEventListener(`click`, this._eventOfferClickHandler);
-    }
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepickers();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormResetHandler(this._callback.formReset);
