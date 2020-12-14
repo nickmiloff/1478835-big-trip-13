@@ -59,7 +59,7 @@ const Mocks = {
     }
   },
   datetime: {
-    initial: `2019-03-19T12:00`,
+    initial: Date.now(),
     gaps: {
       days: 1,
       hours: 6,

@@ -1,8 +1,10 @@
-import TripEvent from "./../view/trip-event";
-import TripEventForm from "./../view/trip-event-form";
+import TripEvent from './../view/trip-event';
+import TripEventForm from './../view/trip-event-form';
 
-import {render, replace, remove} from "./../utils/render";
-import {isEscButton} from "./../utils/common";
+import {render, replace, remove} from './../utils/render';
+import {isEscButton} from './../utils/common';
+import {UserAction, UpdateType, SortType} from './../utils/const';
+import {isDifferentDay, isDifferentTime} from './../utils/sort';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -10,10 +12,11 @@ const Mode = {
 };
 
 export default class EventPresenter {
-  constructor(container, changeData, changeMode) {
+  constructor(container, changeData, changeMode, currentSortType) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._currentSortType = currentSortType;
 
     this._event = null;
     this._eventComponent = null;
@@ -26,6 +29,7 @@ export default class EventPresenter {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formResetHandler = this._formResetHandler.bind(this);
+    this._deleteButtonClickHandler = this._deleteButtonClickHandler.bind(this);
   }
 
   init(event) {
@@ -41,9 +45,7 @@ export default class EventPresenter {
     this._eventComponent.setFavoriteClickHandler(this._favoriteClickHandler);
 
     this._eventComponentEdit.setFormSubmitHandler(this._formSubmitHandler);
-
-    this._eventComponentEdit.setFormResetHandler(this._formResetHandler);
-
+    this._eventComponentEdit.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this._eventComponentEdit.setCloseButtonClickHandler(this._formResetHandler);
 
     if (prevEventComponent === null || prevEventComponentEdit === null) {
@@ -97,6 +99,8 @@ export default class EventPresenter {
 
   _favoriteClickHandler() {
     this._changeData(
+        UserAction.UPDATE_EVENT,
+        UpdateType.MINOR,
         Object.assign({}, this._event, {
           isFavorite: !this._event.isFavorite,
         })
@@ -104,12 +108,29 @@ export default class EventPresenter {
   }
 
   _formSubmitHandler(event) {
-    this._changeData(event);
+    const isMinorUpdate =
+      (this._currentSortType === SortType.DAY && isDifferentDay(this._event, event)) ||
+      (this._currentSortType === SortType.PRICE && this._event.price !== event.price) ||
+      (this._currentSortType === SortType.TIME && isDifferentTime(this._event, event));
+
+    this._changeData(
+        UserAction.UPDATE_EVENT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        event
+    );
     this._replaceFormToEvent();
   }
 
   _formResetHandler() {
     this._eventComponentEdit.reset(this._event);
     this._replaceFormToEvent();
+  }
+
+  _deleteButtonClickHandler(event) {
+    this._changeData(
+        UserAction.DELETE_EVENT,
+        UpdateType.MINOR,
+        event
+    );
   }
 }
