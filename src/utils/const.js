@@ -30,7 +30,24 @@ export const UpdateType = {
 };
 
 export const FilterType = {
-  EVERYTHING: `Everything`,
-  FUTURE: `Future`,
-  PAST: `Past`
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
+};
+
+export const newEventMock = {
+  type: `taxi`,
+  city: ``,
+  offers: [],
+  destination: {
+    description: ``,
+    photos: []
+  },
+  datetime: [
+    Date.now(),
+    Date.now() + 60000
+  ],
+  price: 0,
+  isFavorite: false,
+  isAddMode: true
 };

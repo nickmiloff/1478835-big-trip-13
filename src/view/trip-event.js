@@ -1,6 +1,7 @@
 import Component from './component';
 
 import dayjs from 'dayjs';
+import he from 'he';
 import {toFormatTimeDiff} from './../utils/datetime';
 
 const createEventOfferTemplate = ({title, price}) => {
@@ -21,7 +22,7 @@ const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorit
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${city}</h3>
+        <h3 class="event__title">${type} ${he.encode(city)}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dayjs(datetime[0]).format(`YYYY-MM-DDTHH:mm`)}">${dayjs(datetime[0]).format(`HH:mm`)}</time>
