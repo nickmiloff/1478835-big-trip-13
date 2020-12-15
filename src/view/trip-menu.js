@@ -9,7 +9,7 @@ const createTripMenuTemplate = () => {
   );
 };
 
-export default class TripMenu extends Component {
+export default class TripMenuView extends Component {
   getTemplate() {
     return createTripMenuTemplate();
   }

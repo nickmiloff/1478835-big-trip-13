@@ -1,9 +1,9 @@
-import TripInfoContainer from './view/trip-info-container';
-import TripMenu from './view/trip-menu';
-import EventsList from './presenter/events-list';
-import Filters from './presenter/filters';
-import Events from './model/events';
-import Filter from './model/filter';
+import TripInfoContainerView from './view/trip-info-container';
+import TripMenuView from './view/trip-menu';
+import EventsListPresenter from './presenter/events-list';
+import FiltersPresenter from './presenter/filters';
+import EventsModel from './model/events';
+import FiltersModel from './model/filter';
 import {generateEvent} from './mock/event';
 import {render, RenderPosition} from './utils/render';
 
@@ -11,10 +11,10 @@ const EVENTS_COUNT = 20;
 
 const events = new Array(EVENTS_COUNT).fill().map(generateEvent);
 
-const eventsModel = new Events();
+const eventsModel = new EventsModel();
 eventsModel.setEvents(events);
 
-const filterModel = new Filter();
+const filterModel = new FiltersModel();
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 const siteMainElement = document.querySelector(`.page-main`);
@@ -22,11 +22,11 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 const tripControlElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
 const tripSortHeaderElement = tripControlElement.querySelector(`h2:first-child`);
 const tripEventsContainerElement = siteMainElement.querySelector(`.trip-events`);
-const eventsListPresenter = new EventsList(tripEventsContainerElement, eventsModel, filterModel);
-const filterPresenter = new Filters(tripControlElement, filterModel, eventsModel);
+const eventsListPresenter = new EventsListPresenter(tripEventsContainerElement, eventsModel, filterModel);
+const filterPresenter = new FiltersPresenter(tripControlElement, filterModel, eventsModel);
 
-render(tripMainElement, new TripInfoContainer(events), RenderPosition.AFTERBEGIN);
-render(tripSortHeaderElement, new TripMenu(), RenderPosition.AFTEREND);
+render(tripMainElement, new TripInfoContainerView(events), RenderPosition.AFTERBEGIN);
+render(tripSortHeaderElement, new TripMenuView(), RenderPosition.AFTEREND);
 eventsListPresenter.init();
 filterPresenter.init();
 

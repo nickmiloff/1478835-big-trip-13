@@ -52,7 +52,7 @@ const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorit
   );
 };
 
-export default class TripEvent extends Component {
+export default class TripEventView extends Component {
   constructor(info) {
     super();
     this._info = info;

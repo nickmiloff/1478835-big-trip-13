@@ -32,7 +32,7 @@ const createTripSortTemplate = (currentSortType) => {
   );
 };
 
-export default class TripSort extends Component {
+export default class TripSortView extends Component {
   constructor(currentSortType) {
     super();
 

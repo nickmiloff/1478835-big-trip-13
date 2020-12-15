@@ -1,7 +1,7 @@
 import Observer from '../utils/observer';
 import {FilterType} from '../utils/const';
 
-export default class Filter extends Observer {
+export default class FiltersModel extends Observer {
   constructor() {
     super();
     this._activeFilter = FilterType.EVERYTHING;

@@ -1,5 +1,5 @@
-import TripEvent from './../view/trip-event';
-import TripEventForm from './../view/trip-event-form';
+import TripEventView from './../view/trip-event';
+import TripEventFormView from './../view/trip-event-form';
 
 import {render, replace, remove} from './../utils/render';
 import {isEscButton} from './../utils/common';
@@ -38,8 +38,8 @@ export default class EventPresenter {
     const prevEventComponent = this._eventComponent;
     const prevEventComponentEdit = this._eventComponentEdit;
 
-    this._eventComponent = new TripEvent(this._event);
-    this._eventComponentEdit = new TripEventForm(this._event);
+    this._eventComponent = new TripEventView(this._event);
+    this._eventComponentEdit = new TripEventFormView(this._event);
 
     this._eventComponent.setEditClickHandler(this._replaceEventToForm);
     this._eventComponent.setFavoriteClickHandler(this._favoriteClickHandler);

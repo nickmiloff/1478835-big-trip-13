@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const Types = [
   `taxi`,
   `bus`,
@@ -44,8 +46,8 @@ export const newEventMock = {
     photos: []
   },
   datetime: [
-    Date.now(),
-    Date.now() + 60000
+    dayjs().toDate(),
+    dayjs().add(1, `hour`).toDate()
   ],
   price: 0,
   isFavorite: false,
