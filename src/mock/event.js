@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import {getRandomInteger, getRandomElementFromArr, getRandomElementsFromArr} from '../utils/common';
 import {Types} from '../utils/const';
+import {getId} from '../utils/common';
 
 const Mocks = {
   types: [...Types],
@@ -59,7 +60,7 @@ const Mocks = {
     }
   },
   datetime: {
-    initial: `2019-03-19T12:00`,
+    initial: Date.now(),
     gaps: {
       days: 1,
       hours: 6,
@@ -67,8 +68,6 @@ const Mocks = {
     }
   }
 };
-
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateOffers = () => {
   const {list, min, max} = Mocks.offers;
@@ -115,7 +114,7 @@ const generateDatetime = () => {
 
 export const generateEvent = () => {
   return {
-    id: generateId(),
+    id: getId(),
     type: getRandomElementFromArr(Mocks.types),
     city: getRandomElementFromArr(Mocks.cities),
     offers: generateOffers(),

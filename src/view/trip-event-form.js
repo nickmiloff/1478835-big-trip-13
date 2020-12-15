@@ -1,10 +1,11 @@
 import Smart from './smart';
 import dayjs from 'dayjs';
+import he from 'he';
 import flatpickr from 'flatpickr';
-import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 import {generateDestination} from './../mock/event';
-import {Types} from './../utils/const';
+import {Types, newEventMock} from './../utils/const';
 
 const createEventFormOfferTemplate = ({title, price, checked}) => {
   return (
@@ -92,7 +93,7 @@ const createTripEventFormTemplate = (data = {}) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city)}" list="destination-list-1" required>
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -117,7 +118,7 @@ const createTripEventFormTemplate = (data = {}) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit"}>Save</button>
-          <button class="event__reset-btn" type="reset">${isAddMode ? `Delete` : `Cancel`}</button>
+          <button class="event__reset-btn" type="reset">${isAddMode ? `Cancel` : `Delete`}</button>
           ${isAddMode ? `` : `<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>`}
         </header>
         <section class="event__details">
@@ -132,12 +133,14 @@ const createTripEventFormTemplate = (data = {}) => {
 export default class TripEventForm extends Smart {
   constructor(data) {
     super();
-    this._data = data;
+    this._data = data || Object.assign({}, newEventMock);
     this._startTimeDatepicker = null;
     this._endTimeDatepicker = null;
 
+    this._isNew = data ? false : true;
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._formResetHandler = this._formResetHandler.bind(this);
+    this._deleteButtonClickHandler = this._deleteButtonClickHandler.bind(this);
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
@@ -197,9 +200,9 @@ export default class TripEventForm extends Smart {
     this._callback.formSubmit(TripEventForm.parseDataToEvent(this._data));
   }
 
-  _formResetHandler(evt) {
+  _deleteButtonClickHandler(evt) {
     evt.preventDefault();
-    this._callback.formReset();
+    this._callback.deleteButtonClick(TripEventForm.parseDataToEvent(this._data));
   }
 
   _closeButtonClickHandler(evt) {
@@ -245,6 +248,20 @@ export default class TripEventForm extends Smart {
     }, true);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this._startTimeDatepicker) {
+      this._startTimeDatepicker.destroy();
+      this._startTimeDatepicker = null;
+    }
+
+    if (this._endTimeDatepicker) {
+      this._endTimeDatepicker.destroy();
+      this._endTimeDatepicker = null;
+    }
+  }
+
   getTemplate() {
     return createTripEventFormTemplate(TripEventForm.parseEventToData(this._data));
   }
@@ -254,9 +271,9 @@ export default class TripEventForm extends Smart {
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  setFormResetHandler(callback) {
-    this._callback.formReset = callback;
-    this.getElement().querySelector(`form`).addEventListener(`reset`, this._formResetHandler);
+  setDeleteButtonClickHandler(callback) {
+    this._callback.deleteButtonClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteButtonClickHandler);
   }
 
   setCloseButtonClickHandler(callback) {
@@ -281,8 +298,10 @@ export default class TripEventForm extends Smart {
     this._setDatepickers();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setFormResetHandler(this._callback.formReset);
-    this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    if (!this._isNew) {
+      this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    }
+    this.setDeleteButtonClickHandler(this._callback.deleteButtonClick);
   }
 
   reset(event) {
@@ -296,7 +315,7 @@ export default class TripEventForm extends Smart {
         {},
         event,
         {
-          isAddMode: event === {},
+          isAddMode: event.isAddMode || false,
           withOffers: event.offers.length > 0,
           withDescription: event.destination.description !== ``,
           withPhotos: event.destination.photos.length > 0

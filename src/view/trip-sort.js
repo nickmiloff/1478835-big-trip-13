@@ -1,16 +1,11 @@
 import Component from './component';
+import {SortType} from './../utils/const';
 
-export const SortType = {
-  DAY: `sort-day`,
-  TIME: `sort-time`,
-  PRICE: `sort-price`
-};
-
-const createTripSortTemplate = () => {
+const createTripSortTemplate = (currentSortType) => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <div class="trip-sort__item  trip-sort__item--day">
-        <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked>
+        <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" ${currentSortType === SortType.DAY ? `checked` : ``}>
         <label class="trip-sort__btn" for="sort-day">Day</label>
       </div>
 
@@ -20,12 +15,12 @@ const createTripSortTemplate = () => {
       </div>
 
       <div class="trip-sort__item  trip-sort__item--time">
-        <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time">
+        <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${currentSortType === SortType.TIME ? `checked` : ``}>
         <label class="trip-sort__btn" for="sort-time">Time</label>
       </div>
 
       <div class="trip-sort__item  trip-sort__item--price">
-        <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price">
+        <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${currentSortType === SortType.PRICE ? `checked` : ``}>
         <label class="trip-sort__btn" for="sort-price">Price</label>
       </div>
 
@@ -38,14 +33,16 @@ const createTripSortTemplate = () => {
 };
 
 export default class TripSort extends Component {
-  constructor() {
+  constructor(currentSortType) {
     super();
+
+    this._currentSortType = currentSortType;
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createTripSortTemplate();
+    return createTripSortTemplate(this._currentSortType);
   }
 
   _sortTypeChangeHandler(evt) {
