@@ -2,8 +2,11 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
-export const toFormatTimeDiff = (from, to) => {
-  const ms = dayjs(to).diff(dayjs(from));
+export const getTimeDiff = (from, to) => {
+  return dayjs(to).diff(dayjs(from));
+};
+
+export const toFormatTimeDiff = (ms) => {
   const eventDuration = dayjs.duration(ms).format(`DD[D] HH[H] mm[M]`);
 
   if (!eventDuration.startsWith(`00D`)) {

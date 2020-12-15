@@ -244,7 +244,7 @@ export default class TripEventFormView extends Smart {
   _eventPriceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      price: evt.target.value
+      price: +evt.target.value
     }, true);
   }
 

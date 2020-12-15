@@ -53,3 +53,16 @@ export const newEventMock = {
   isFavorite: false,
   isAddMode: true
 };
+
+export const MenuItem = {
+  TABLE: `Table`,
+  STATS: `Stats`
+};
+
+export const BAR_HEIGHT = 55;
+
+export const StatsType = {
+  MONEY: `MONEY`,
+  TYPE: `TYPE`,
+  SPEND: `TIME-SPEND`
+};

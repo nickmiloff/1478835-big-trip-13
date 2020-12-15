@@ -15,8 +15,8 @@ export default class EventsListPresenter {
 
     this._eventPresenter = {};
     this._listComponent = new TripEventsListView();
-    this._sortComponent = null;
     this._emptyMessageComponent = new EmptyListMessageView();
+    this._sortComponent = null;
     this._currentSortType = SortType.DAY;
 
     this._modeChangeHandler = this._modeChangeHandler.bind(this);
@@ -24,20 +24,27 @@ export default class EventsListPresenter {
     this._viewActionHandler = this._viewActionHandler.bind(this);
     this._modelEventHandler = this._modelEventHandler.bind(this);
 
-    this._eventsModel.addObserver(this._modelEventHandler);
-    this._filterModel.addObserver(this._modelEventHandler);
-
     this._eventNewPresenter = new EventNewPresenter(this._listComponent, this._viewActionHandler);
   }
 
   init() {
+    this._eventsModel.addObserver(this._modelEventHandler);
+    this._filterModel.addObserver(this._modelEventHandler);
+
     this._renderEventsList();
   }
 
-  createTask() {
+  destroy() {
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+
+    this._clearEventsList({resetSortType: true});
+  }
+
+  createEvent(callback) {
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+    this._eventNewPresenter.init(callback);
   }
 
   _getEvents() {
@@ -89,6 +96,7 @@ export default class EventsListPresenter {
     this._eventPresenter = {};
 
     remove(this._sortComponent);
+    remove(this._listComponent);
     remove(this._emptyMessageComponent);
 
     if (resetSortType) {

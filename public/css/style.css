@@ -104,6 +104,9 @@ main {
   -ms-flex-direction: column;
       flex-direction: column; }
 
+.page-main--stats .page-body__container::after {
+  content: none; }
+
 .btn {
   display: -ms-flexbox;
   display: flex;
