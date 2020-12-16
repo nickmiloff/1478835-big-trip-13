@@ -7,7 +7,7 @@ const createTripEventsListTemplate = () => {
   );
 };
 
-export default class TripEventsList extends Component {
+export default class TripEventsListView extends Component {
   getTemplate() {
     return createTripEventsListTemplate();
   }

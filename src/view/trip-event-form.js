@@ -130,7 +130,7 @@ const createTripEventFormTemplate = (data = {}) => {
   );
 };
 
-export default class TripEventForm extends Smart {
+export default class TripEventFormView extends Smart {
   constructor(data) {
     super();
     this._data = data || Object.assign({}, newEventMock);
@@ -197,12 +197,12 @@ export default class TripEventForm extends Smart {
         newOffers[i].checked = offer.checked;
       });
 
-    this._callback.formSubmit(TripEventForm.parseDataToEvent(this._data));
+    this._callback.formSubmit(TripEventFormView.parseDataToEvent(this._data));
   }
 
   _deleteButtonClickHandler(evt) {
     evt.preventDefault();
-    this._callback.deleteButtonClick(TripEventForm.parseDataToEvent(this._data));
+    this._callback.deleteButtonClick(TripEventFormView.parseDataToEvent(this._data));
   }
 
   _closeButtonClickHandler(evt) {
@@ -244,7 +244,7 @@ export default class TripEventForm extends Smart {
   _eventPriceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      price: evt.target.value
+      price: +evt.target.value
     }, true);
   }
 
@@ -263,7 +263,7 @@ export default class TripEventForm extends Smart {
   }
 
   getTemplate() {
-    return createTripEventFormTemplate(TripEventForm.parseEventToData(this._data));
+    return createTripEventFormTemplate(TripEventFormView.parseEventToData(this._data));
   }
 
   setFormSubmitHandler(callback) {
@@ -306,7 +306,7 @@ export default class TripEventForm extends Smart {
 
   reset(event) {
     this.updateData(
-        TripEventForm.parseEventToData(event)
+        TripEventFormView.parseEventToData(event)
     );
   }
 

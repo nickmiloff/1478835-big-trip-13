@@ -51,7 +51,7 @@ const createTripInfoContainerTemplate = (events) => {
   );
 };
 
-export default class TripInfoContainer extends Component {
+export default class TripInfoContainerView extends Component {
   constructor(events) {
     super();
     this._events = events;

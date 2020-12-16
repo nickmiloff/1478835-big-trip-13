@@ -1,8 +1,8 @@
-import TripFilters from '../view/trip-filters';
+import TripFiltersView from '../view/trip-filters';
 import {render, replace, remove} from '../utils/render';
 import {UpdateType} from '../utils/const';
 
-export default class Filters {
+export default class FiltersPresenter {
   constructor(container, filterModel, eventsModel) {
     this._container = container;
     this._filterModel = filterModel;
@@ -24,7 +24,7 @@ export default class Filters {
 
     const prevFilterComponent = this._filterComponent;
 
-    this._filterComponent = new TripFilters(this._currentFilter);
+    this._filterComponent = new TripFiltersView(this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._filterTypeChangeHandler);
 
     if (prevFilterComponent === null) {

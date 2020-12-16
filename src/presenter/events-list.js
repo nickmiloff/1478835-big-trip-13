@@ -1,23 +1,22 @@
-import TripEventsList from '../view/trip-events-list';
-import TripSort from '../view/trip-sort';
-import EmptyListMessage from '../view/empty-list-message';
+import TripEventsListView from '../view/trip-events-list';
+import TripSortView from '../view/trip-sort';
+import EmptyListMessageView from '../view/empty-list-message';
 import EventPresenter from './event';
 import EventNewPresenter from './event-new';
 import {render, remove} from '../utils/render';
-import {sortByDay, sortByTime, sortByPrice} from '../utils/sort';
+import {sortEvents} from '../utils/sort';
 import {UpdateType, UserAction, SortType, FilterType} from '../utils/const';
-import {filter} from '../utils/filter';
 
-export default class EventsList {
+export default class EventsListPresenter {
   constructor(container, eventsModel, filterModel) {
     this._container = container;
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
 
     this._eventPresenter = {};
-    this._listComponent = new TripEventsList();
+    this._listComponent = new TripEventsListView();
+    this._emptyMessageComponent = new EmptyListMessageView();
     this._sortComponent = null;
-    this._emptyMessageComponent = new EmptyListMessage();
     this._currentSortType = SortType.DAY;
 
     this._modeChangeHandler = this._modeChangeHandler.bind(this);
@@ -25,40 +24,34 @@ export default class EventsList {
     this._viewActionHandler = this._viewActionHandler.bind(this);
     this._modelEventHandler = this._modelEventHandler.bind(this);
 
-    this._eventsModel.addObserver(this._modelEventHandler);
-    this._filterModel.addObserver(this._modelEventHandler);
-
     this._eventNewPresenter = new EventNewPresenter(this._listComponent, this._viewActionHandler);
   }
 
   init() {
+    this._eventsModel.addObserver(this._modelEventHandler);
+    this._filterModel.addObserver(this._modelEventHandler);
+
     this._renderEventsList();
   }
 
-  createTask() {
+  destroy() {
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+
+    this._clearEventsList({resetSortType: true});
+  }
+
+  createEvent(callback) {
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+    this._eventNewPresenter.init(callback);
   }
 
   _getEvents() {
     const filterType = this._filterModel.getFilter();
-    const events = this._eventsModel.getEvents();
-    const filtredEvents = filter[filterType](events);
+    const filtredEvents = this._eventsModel.getFiltredEvents(filterType);
 
-    switch (this._currentSortType) {
-      case SortType.DAY:
-        filtredEvents.sort(sortByDay);
-        break;
-      case SortType.TIME:
-        filtredEvents.sort(sortByTime);
-        break;
-      case SortType.PRICE:
-        filtredEvents.sort(sortByPrice);
-        break;
-    }
-
-    return filtredEvents;
+    return sortEvents(this._currentSortType, filtredEvents);
   }
 
   _renderList() {
@@ -78,7 +71,7 @@ export default class EventsList {
       this._sortComponent = null;
     }
 
-    this._sortComponent = new TripSort(this._currentSortType);
+    this._sortComponent = new TripSortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
 
     render(this._container, this._sortComponent);
@@ -103,6 +96,7 @@ export default class EventsList {
     this._eventPresenter = {};
 
     remove(this._sortComponent);
+    remove(this._listComponent);
     remove(this._emptyMessageComponent);
 
     if (resetSortType) {

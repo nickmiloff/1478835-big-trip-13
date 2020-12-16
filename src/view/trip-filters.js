@@ -24,7 +24,7 @@ const createTripFiltersTemplate = (currentFilterType) => {
   );
 };
 
-export default class TripFilters extends Component {
+export default class TripFiltersView extends Component {
   constructor(currentFilterType) {
     super();
 

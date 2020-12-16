@@ -2,7 +2,7 @@ import Component from './component';
 
 import dayjs from 'dayjs';
 import he from 'he';
-import {toFormatTimeDiff} from './../utils/datetime';
+import {toFormatTimeDiff, getTimeDiff} from './../utils/datetime';
 
 const createEventOfferTemplate = ({title, price}) => {
   return (
@@ -15,6 +15,8 @@ const createEventOfferTemplate = ({title, price}) => {
 };
 
 const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorite}) => {
+  const timeDiff = getTimeDiff(datetime[0], datetime[1]);
+
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -29,7 +31,7 @@ const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorit
             &mdash;
             <time class="event__end-time" datetime="${dayjs(datetime[1]).format(`YYYY-MM-DDTHH:mm`)}">${dayjs(datetime[1]).format(`HH:mm`)}</time>
           </p>
-          <p class="event__duration">${toFormatTimeDiff(datetime[0], datetime[1])}</p>
+          <p class="event__duration">${toFormatTimeDiff(timeDiff)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${price}</span>
@@ -52,7 +54,7 @@ const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorit
   );
 };
 
-export default class TripEvent extends Component {
+export default class TripEventView extends Component {
   constructor(info) {
     super();
     this._info = info;

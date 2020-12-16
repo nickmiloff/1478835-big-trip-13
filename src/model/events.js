@@ -1,6 +1,7 @@
 import Observer from '../utils/observer.js';
+import {filter} from '../utils/filter';
 
-export default class Events extends Observer {
+export default class EventsModel extends Observer {
   constructor() {
     super();
     this._events = [];
@@ -52,5 +53,9 @@ export default class Events extends Observer {
 
   getEvents() {
     return this._events;
+  }
+
+  getFiltredEvents(filterType) {
+    return filter[filterType](this._events);
   }
 }
