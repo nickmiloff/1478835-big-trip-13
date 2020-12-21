@@ -28,7 +28,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const FilterType = {
@@ -39,12 +40,9 @@ export const FilterType = {
 
 export const newEventMock = {
   type: `taxi`,
-  city: ``,
+  city: `Amsterdam`,
   offers: [],
-  destination: {
-    description: ``,
-    photos: []
-  },
+  destination: {},
   datetime: [
     dayjs().toDate(),
     dayjs().add(1, `hour`).toDate()
@@ -65,4 +63,19 @@ export const StatsType = {
   MONEY: `MONEY`,
   TYPE: `TYPE`,
   SPEND: `TIME-SPEND`
+};
+
+export const ApiMethod = {
+  GET: `GET`,
+  PUT: `PUT`
+};
+
+export const SuccessHTTPStatusRange = {
+  MIN: 200,
+  MAX: 299
+};
+
+export const datepickerTemp = {
+  enableTime: true,
+  dateFormat: `y/m/d H:i`
 };

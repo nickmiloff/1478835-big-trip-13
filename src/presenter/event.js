@@ -32,14 +32,14 @@ export default class EventPresenter {
     this._deleteButtonClickHandler = this._deleteButtonClickHandler.bind(this);
   }
 
-  init(event) {
-    this._event = event;
-
+  init(event, destinations, offers) {
     const prevEventComponent = this._eventComponent;
     const prevEventComponentEdit = this._eventComponentEdit;
 
+    this._event = event;
+
     this._eventComponent = new TripEventView(this._event);
-    this._eventComponentEdit = new TripEventFormView(this._event);
+    this._eventComponentEdit = new TripEventFormView(this._event, destinations, offers);
 
     this._eventComponent.setEditClickHandler(this._replaceEventToForm);
     this._eventComponent.setFavoriteClickHandler(this._favoriteClickHandler);
@@ -76,14 +76,6 @@ export default class EventPresenter {
     }
   }
 
-  _eventEscKeydownHandler(evt) {
-    if (isEscButton(evt.key)) {
-      evt.preventDefault();
-      this._eventComponentEdit.reset(this._event);
-      this._replaceFormToEvent();
-    }
-  }
-
   _replaceEventToForm() {
     replace(this._eventComponentEdit, this._eventComponent);
     document.addEventListener(`keydown`, this._eventEscKeydownHandler);
@@ -95,6 +87,14 @@ export default class EventPresenter {
     replace(this._eventComponent, this._eventComponentEdit);
     document.removeEventListener(`keydown`, this._eventEscKeydownHandler);
     this._mode = Mode.DEFAULT;
+  }
+
+  _eventEscKeydownHandler(evt) {
+    if (isEscButton(evt.key)) {
+      evt.preventDefault();
+      this._eventComponentEdit.reset(this._event);
+      this._replaceFormToEvent();
+    }
   }
 
   _favoriteClickHandler() {

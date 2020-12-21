@@ -20,9 +20,9 @@ export default class FiltersPresenter {
   }
 
   init() {
-    this._currentFilter = this._filterModel.getFilter();
-
     const prevFilterComponent = this._filterComponent;
+
+    this._currentFilter = this._filterModel.getFilter();
 
     this._filterComponent = new TripFiltersView(this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._filterTypeChangeHandler);
