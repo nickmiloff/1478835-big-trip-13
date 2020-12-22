@@ -5,8 +5,6 @@ export default class EventsModel extends Observer {
   constructor() {
     super();
     this._events = [];
-    this._offers = [];
-    this._destinations = [];
   }
 
   setEvents(updateType, events) {
@@ -15,24 +13,8 @@ export default class EventsModel extends Observer {
     this._notify(updateType);
   }
 
-  setOffers(offers) {
-    this._offers = [...offers];
-  }
-
-  setDestinations(destinations) {
-    this._destinations = [...destinations];
-  }
-
   getEvents() {
     return this._events;
-  }
-
-  getOffers() {
-    return this._offers;
-  }
-
-  getDestinations() {
-    return this._destinations;
   }
 
   getFiltredEvents(filterType) {

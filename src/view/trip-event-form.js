@@ -265,8 +265,8 @@ export default class TripEventFormView extends Smart {
     evt.preventDefault();
 
     const newOffers = [];
-    const currentType = this._data.type;
-    const typeOffers = this._offers.find((cur) => cur.type === currentType).offers;
+    const typeOffers = this._offers.find((current) => current.type === this._data.type).offers;
+    const newDestination = this._destinations.find((current) => current.name === this._data.city);
 
     this.getElement()
       .querySelectorAll(`.event__offer-checkbox`)
@@ -277,6 +277,7 @@ export default class TripEventFormView extends Smart {
       });
 
     this._data.offers = newOffers;
+    this._data.destination = newDestination;
 
     this._callback.formSubmit(TripEventFormView.parseDataToEvent(this._data));
   }

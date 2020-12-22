@@ -1,5 +1,3 @@
-import {nanoid} from 'nanoid';
-
 const KeyboardKeys = {
   ESC: `Escape`,
   ENTER: `Enter`
@@ -36,5 +34,3 @@ export const getRandomElementsFromArr = (arr, minCount = 0, maxCount = 10) => {
 
   return result;
 };
-
-export const getId = () => nanoid();

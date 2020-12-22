@@ -1,5 +1,4 @@
 import TripEventFormView from '../view/trip-event-form';
-import {getId} from '../utils/common';
 import {remove, render, RenderPosition} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
 import {isEscButton} from '../utils/common';
@@ -52,7 +51,7 @@ export default class EventNewPresenter {
     this._changeData(
         UserAction.ADD_EVENT,
         UpdateType.MINOR,
-        Object.assign({id: getId()}, event)
+        event
     );
     this.destroy();
   }

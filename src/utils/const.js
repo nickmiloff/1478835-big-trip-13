@@ -67,7 +67,9 @@ export const StatsType = {
 
 export const ApiMethod = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 export const SuccessHTTPStatusRange = {
