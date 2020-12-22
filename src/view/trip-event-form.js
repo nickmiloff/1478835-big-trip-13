@@ -5,10 +5,17 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import {Types, newEventMock, datepickerTemp} from './../utils/const';
 
-const createEventFormOfferTemplate = ({title, price}, checked) => {
+const createEventFormOfferTemplate = ({title, price}, isChecked, isDisabled) => {
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}-1" type="checkbox" name="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}"${checked ? `checked` : ``}>
+      <input
+        class="event__offer-checkbox
+        visually-hidden"
+        id="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}-1"
+        type="checkbox"
+        name="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}"
+        ${isChecked ? `checked` : ``}
+        ${isDisabled ? `disabled` : ``}>
       <label class="event__offer-label" for="event-offer-${title.replaceAll(` `, `-`).toLowerCase()}-1">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -18,14 +25,14 @@ const createEventFormOfferTemplate = ({title, price}, checked) => {
   );
 };
 
-const createEventFormOffersListTemplate = (offers, typeOffres) => {
+const createEventFormOffersListTemplate = (offers, typeOffres, isDisabled) => {
   return (
     `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
       ${typeOffres.map((offer) => {
-      const checked = offers.find((cur) => cur.title === offer.title) ? true : false;
-      return createEventFormOfferTemplate(offer, checked);
+      const isChecked = offers.find((cur) => cur.title === offer.title) ? true : false;
+      return createEventFormOfferTemplate(offer, isChecked, isDisabled);
     }).join(``)}
       </div>
     </section>`
@@ -65,7 +72,7 @@ const createEventTypeItemTemplate = (type, isChecked) => {
 
   return (
     `<div class="event__type-item">
-      <input id="event-type-${lowerCaseType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${lowerCaseType}" ${isChecked ? ` checked` : ``}>
+      <input id="event-type-${lowerCaseType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${lowerCaseType}" ${isChecked ? `checked` : ``}>
       <label class="event__type-label  event__type-label--${lowerCaseType}" for="event-type-${lowerCaseType}-1">${type}</label>
     </div>`
   );
@@ -74,7 +81,25 @@ const createEventTypeItemTemplate = (type, isChecked) => {
 const createEventDestinationOptionTemplate = (city) => `<option value="${city}"></option>`;
 
 const createTripEventFormTemplate = (data = {}) => {
-  const {type = `taxi`, city = `Amsterdam`, offers = [], typeOffers = [], destination = {}, citiesDestinations = [], price = 0, datetime, isAddMode = true, withOffers = false, withDescription = false, withPictures = false} = data;
+  const {
+    type = `taxi`,
+    city = `Amsterdam`,
+    offers = [],
+    typeOffers = [],
+    destination = {},
+    citiesDestinations = [],
+    price = 0,
+    datetime,
+    isAddMode = true,
+    withOffers = false,
+    withDescription = false,
+    withPictures = false,
+    isDisabled = false,
+    isSaving = false,
+    isDeleting = false
+  } = data;
+
+  const delteCancelButton = isAddMode ? `Cancel` : `Delete`;
 
   return (
     `<li class="trip-events__item">
@@ -85,7 +110,7 @@ const createTripEventFormTemplate = (data = {}) => {
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? `disabled` : ``}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -99,7 +124,7 @@ const createTripEventFormTemplate = (data = {}) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city)}" list="destination-list-1" required>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city)}" list="destination-list-1" required ${isDisabled ? `disabled` : ``}>
             <datalist id="destination-list-1">
               ${citiesDestinations.map((current) => createEventDestinationOptionTemplate(current.name)).join(``)}
               <option value="Amsterdam"></option>
@@ -110,10 +135,10 @@ const createTripEventFormTemplate = (data = {}) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(datetime[0]).format(`YY/MM/DD HH:mm`)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(datetime[0]).format(`YY/MM/DD HH:mm`)}" ${isDisabled ? `disabled` : ``}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(datetime[1]).format(`YY/MM/DD HH:mm`)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(datetime[1]).format(`YY/MM/DD HH:mm`)}" ${isDisabled ? `disabled` : ``}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -121,15 +146,15 @@ const createTripEventFormTemplate = (data = {}) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}" ${isDisabled ? `disabled` : ``}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit"}>Save</button>
-          <button class="event__reset-btn" type="reset">${isAddMode ? `Cancel` : `Delete`}</button>
-          ${isAddMode ? `` : `<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>`}
+          <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? `Saving...` : `Save`}</button>
+          <button class="event__reset-btn" type="reset">${isDeleting ? `Deleting...` : delteCancelButton}</button>
+          ${isAddMode ? `` : `<button class="event__rollup-btn" type="button" ${isDisabled ? `disabled` : ``}><span class="visually-hidden">Open event</span></button>`}
         </header>
         <section class="event__details">
-          ${withOffers ? createEventFormOffersListTemplate(offers, typeOffers) : ``}
+          ${withOffers ? createEventFormOffersListTemplate(offers, typeOffers, isDisabled) : ``}
           ${withDescription || withPictures ? createEventFormDestinationTemplate(destination, withDescription, withPictures) : ``}
         </section>
       </form>
@@ -357,6 +382,11 @@ export default class TripEventFormView extends Smart {
 
     return Object.assign(
         {},
+        {
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        },
         event,
         {
           typeOffers: offers,
@@ -379,6 +409,9 @@ export default class TripEventFormView extends Smart {
     delete data.withOffers;
     delete data.withDescription;
     delete data.withPictures;
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
 
     return data;
   }

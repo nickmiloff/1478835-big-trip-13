@@ -16,6 +16,25 @@ export default class EventNewPresenter {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
+  setSaving() {
+    this._eventComponentEdit.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventComponentEdit.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._eventComponentEdit.shake(resetFormState);
+  }
+
   init(callback, destinations, offers) {
     this._destroyCallback = callback;
 
@@ -53,7 +72,6 @@ export default class EventNewPresenter {
         UpdateType.MINOR,
         event
     );
-    this.destroy();
   }
 
   _deleteButtonClickHandler() {
