@@ -2,9 +2,10 @@ import TripEventView from './../view/trip-event';
 import TripEventFormView from './../view/trip-event-form';
 
 import {render, replace, remove} from './../utils/render';
-import {isEscButton} from './../utils/common';
+import {isEscButton, isOnline} from './../utils/common';
 import {UserAction, UpdateType, SortType} from './../utils/const';
 import {isDifferentDay, isDifferentTime} from './../utils/sort';
+import {message} from './../utils/message';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -35,6 +36,7 @@ export default class EventPresenter {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formResetHandler = this._formResetHandler.bind(this);
+    this._editButtonClickHandler = this._editButtonClickHandler.bind(this);
     this._deleteButtonClickHandler = this._deleteButtonClickHandler.bind(this);
   }
 
@@ -47,7 +49,7 @@ export default class EventPresenter {
     this._eventComponent = new TripEventView(this._event);
     this._eventComponentEdit = new TripEventFormView(this._event, destinations, offers);
 
-    this._eventComponent.setEditClickHandler(this._replaceEventToForm);
+    this._eventComponent.setEditClickHandler(this._editButtonClickHandler);
     this._eventComponent.setFavoriteClickHandler(this._favoriteClickHandler);
 
     this._eventComponentEdit.setFormSubmitHandler(this._formSubmitHandler);
@@ -144,6 +146,11 @@ export default class EventPresenter {
   }
 
   _formSubmitHandler(event) {
+    if (!isOnline()) {
+      message(`Вы не можете сохранить ивент в оффлайн режиме`);
+      return;
+    }
+
     const isMinorUpdate =
       (this._currentSortType === SortType.DAY && isDifferentDay(this._event, event)) ||
       (this._currentSortType === SortType.PRICE && this._event.price !== event.price) ||
@@ -161,7 +168,21 @@ export default class EventPresenter {
     this._replaceFormToEvent();
   }
 
+  _editButtonClickHandler() {
+    if (!isOnline()) {
+      message(`Вы не можете изменить ивент в оффлайн режиме`);
+      return;
+    }
+
+    this._replaceEventToForm();
+  }
+
   _deleteButtonClickHandler(event) {
+    if (!isOnline()) {
+      message(`Вы не можете удалить ивент в оффлайн режиме`);
+      return;
+    }
+
     this._changeData(
         UserAction.DELETE_EVENT,
         UpdateType.MINOR,

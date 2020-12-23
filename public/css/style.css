@@ -1009,13 +1009,13 @@ main {
   margin-bottom: 78px; }
 
 .offline-message {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 50%;
   display: block;
-  padding: 1px 20px 2px;
-  border-bottom-left-radius: 23px;
-  border-bottom-right-radius: 23px;
+  padding: 4px 34px 7px;
+  border-bottom-left-radius: 34px;
+  border-bottom-right-radius: 34px;
   text-align: center;
   background-color: #E83151;
   transform: translateX(-50%); }
@@ -1023,4 +1023,5 @@ main {
 .offline-message__title {
   margin: 0;
   font-size: 17px;
-  line-height: 18px; }
+  line-height: 23px;
+  color: white; }
