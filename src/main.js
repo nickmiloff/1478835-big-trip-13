@@ -1,11 +1,11 @@
 import TripMenuView from './view/trip-menu';
-import StatsView from './view/stats';
 import EventsListPresenter from './presenter/events-list';
 import FiltersPresenter from './presenter/filters';
 import InfoPresenter from './presenter/info';
+import StatsPresenter from './presenter/stats';
 import EventsModel from './model/events';
 import FiltersModel from './model/filter';
-import {render, RenderPosition, remove} from './utils/render';
+import {render, RenderPosition} from './utils/render';
 import {MenuItem, UpdateType} from './utils/const';
 import Api from './api';
 import Store from './store';
@@ -29,20 +29,18 @@ const newEventButtonElement = tripMainElement.querySelector(`.trip-main__event-a
 const eventsListPresenter = new EventsListPresenter(tripEventsContainerElement, eventsModel, filterModel, api, store);
 const filterPresenter = new FiltersPresenter(tripControlElement, filterModel, eventsModel);
 const infoPresenter = new InfoPresenter(tripMainElement, eventsModel, filterModel);
+const statsPresenter = new StatsPresenter(tripEventsContainerElement, eventsModel, filterModel);
 const tripMenuComponent = new TripMenuView();
-
-let statsComponent = null;
 
 const tripMenuClickHandler = (menuItem) => {
   switch (menuItem) {
     case MenuItem.STATS:
-      statsComponent = new StatsView(eventsModel.getEvents());
-      render(tripEventsContainerElement, statsComponent, RenderPosition.AFTEREND);
+      statsPresenter.init();
       eventsListPresenter.destroy();
       siteMainElement.classList.add(`page-main--stats`);
       break;
     case MenuItem.TABLE:
-      remove(statsComponent);
+      statsPresenter.destroy();
       eventsListPresenter.init();
       siteMainElement.classList.remove(`page-main--stats`);
       break;
@@ -57,7 +55,7 @@ filterPresenter.init();
 
 newEventButtonElement.addEventListener(`click`, (evt) => {
   evt.preventDefault();
-  remove(statsComponent);
+  statsPresenter.destroy();
   eventsListPresenter.destroy();
   tripMenuComponent.setMenuItem(MenuItem.TABLE);
   eventsListPresenter.init();
