@@ -7,6 +7,20 @@ export default class EventsModel extends Observer {
     this._events = [];
   }
 
+  setEvents(updateType, events) {
+    this._events = [...events];
+
+    this._notify(updateType);
+  }
+
+  getEvents() {
+    return this._events;
+  }
+
+  getFiltredEvents(filterType) {
+    return filter[filterType](this._events);
+  }
+
   updateEvent(updateType, update) {
     const index = this._events.findIndex((event) => event.id === update.id);
 
@@ -47,15 +61,54 @@ export default class EventsModel extends Observer {
     this._notify(updateType);
   }
 
-  setEvents(events) {
-    this._events = [...events];
+  static adaptToClient(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          price: event.base_price,
+          datetime: [
+            event.date_from,
+            event.date_to
+          ],
+          isFavorite: event.is_favorite,
+          city: event.destination.name
+        }
+    );
+
+    delete adaptedEvent.base_price;
+    delete adaptedEvent.date_from;
+    delete adaptedEvent.date_to;
+    delete adaptedEvent.is_favorite;
+    delete adaptedEvent.destination.name;
+
+    return adaptedEvent;
   }
 
-  getEvents() {
-    return this._events;
-  }
+  static adaptToServer(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          "base_price": event.price,
+          "date_from": event.datetime[0],
+          "date_to": event.datetime[1],
+          "is_favorite": event.isFavorite,
+          "destination": Object.assign(
+              {},
+              event.destination,
+              {
+                name: event.city
+              }
+          )
+        }
+    );
 
-  getFiltredEvents(filterType) {
-    return filter[filterType](this._events);
+    delete adaptedEvent.price;
+    delete adaptedEvent.datetime;
+    delete adaptedEvent.isFavorite;
+    delete adaptedEvent.city;
+
+    return adaptedEvent;
   }
 }

@@ -1,5 +1,4 @@
-import TripEventForm from '../view/trip-event-form';
-import {getId} from '../utils/common';
+import TripEventFormView from '../view/trip-event-form';
 import {remove, render, RenderPosition} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
 import {isEscButton} from '../utils/common';
@@ -17,14 +16,33 @@ export default class EventNewPresenter {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(callback) {
+  setSaving() {
+    this._eventComponentEdit.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventComponentEdit.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._eventComponentEdit.shake(resetFormState);
+  }
+
+  init(callback, destinations, offers) {
     this._destroyCallback = callback;
 
     if (this._eventComponentEdit !== null) {
       return;
     }
 
-    this._eventComponentEdit = new TripEventForm();
+    this._eventComponentEdit = new TripEventFormView(null, destinations, offers);
     this._eventComponentEdit.setFormSubmitHandler(this._formSubmitHandler);
     this._eventComponentEdit.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
 
@@ -52,9 +70,8 @@ export default class EventNewPresenter {
     this._changeData(
         UserAction.ADD_EVENT,
         UpdateType.MINOR,
-        Object.assign({id: getId()}, event)
+        event
     );
-    this.destroy();
   }
 
   _deleteButtonClickHandler() {

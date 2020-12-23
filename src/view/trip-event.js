@@ -38,7 +38,7 @@ const createTripEventTemplate = ({type, city, offers, price, datetime, isFavorit
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${offers.filter((offer) => offer.checked).map(createEventOfferTemplate).join(``)}
+          ${offers.map(createEventOfferTemplate).join(``)}
         </ul>
         <button class="event__favorite-btn${isFavorite ? ` event__favorite-btn--active` : ``}" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -62,16 +62,6 @@ export default class TripEventView extends Component {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
-  _editClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.editClick();
-  }
-
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-  }
-
   getTemplate() {
     return createTripEventTemplate(this._info);
   }
@@ -84,5 +74,15 @@ export default class TripEventView extends Component {
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
+  }
+
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   }
 }

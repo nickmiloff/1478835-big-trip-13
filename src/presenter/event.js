@@ -9,6 +9,12 @@ import {isDifferentDay, isDifferentTime} from './../utils/sort';
 const Mode = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`,
+  ABORTING: `ABORTING`
+};
+
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`
 };
 
 export default class EventPresenter {
@@ -32,14 +38,14 @@ export default class EventPresenter {
     this._deleteButtonClickHandler = this._deleteButtonClickHandler.bind(this);
   }
 
-  init(event) {
-    this._event = event;
-
+  init(event, destinations, offers) {
     const prevEventComponent = this._eventComponent;
     const prevEventComponentEdit = this._eventComponentEdit;
 
+    this._event = event;
+
     this._eventComponent = new TripEventView(this._event);
-    this._eventComponentEdit = new TripEventFormView(this._event);
+    this._eventComponentEdit = new TripEventFormView(this._event, destinations, offers);
 
     this._eventComponent.setEditClickHandler(this._replaceEventToForm);
     this._eventComponent.setFavoriteClickHandler(this._favoriteClickHandler);
@@ -58,11 +64,41 @@ export default class EventPresenter {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._eventComponentEdit, prevEventComponentEdit);
+      replace(this._eventComponent, prevEventComponentEdit);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
     remove(prevEventComponentEdit);
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._eventComponentEdit.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._eventComponentEdit.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._eventComponentEdit.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._eventComponentEdit.shake(resetFormState);
+        break;
+    }
   }
 
   destroy() {
@@ -72,14 +108,6 @@ export default class EventPresenter {
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceFormToEvent();
-    }
-  }
-
-  _eventEscKeydownHandler(evt) {
-    if (isEscButton(evt.key)) {
-      evt.preventDefault();
-      this._eventComponentEdit.reset(this._event);
       this._replaceFormToEvent();
     }
   }
@@ -95,6 +123,14 @@ export default class EventPresenter {
     replace(this._eventComponent, this._eventComponentEdit);
     document.removeEventListener(`keydown`, this._eventEscKeydownHandler);
     this._mode = Mode.DEFAULT;
+  }
+
+  _eventEscKeydownHandler(evt) {
+    if (isEscButton(evt.key)) {
+      evt.preventDefault();
+      this._eventComponentEdit.reset(this._event);
+      this._replaceFormToEvent();
+    }
   }
 
   _favoriteClickHandler() {
@@ -118,7 +154,6 @@ export default class EventPresenter {
         isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
         event
     );
-    this._replaceFormToEvent();
   }
 
   _formResetHandler() {

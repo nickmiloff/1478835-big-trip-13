@@ -2,6 +2,34 @@ import Component from './component';
 import {sortByDay} from './../utils/sort';
 import dayjs from 'dayjs';
 
+const getEventsTotalCost = (events) => {
+  return events
+    .reduce((total, event) => {
+      const offersCost = event.offers
+        .reduce((sum, offer) => {
+          sum += offer.price;
+          return sum;
+        }, 0);
+
+      total += (event.price + offersCost);
+
+      return total;
+    }, 0);
+};
+
+const getEventsCitites = (events) => {
+  const cities = Array.from(new Set(events.map((event) => event.city)));
+  const citiesLength = cities.length;
+
+  return citiesLength > 3 ? `${cities[0]} &mdash; ... &mdash; ${cities[citiesLength - 1]}` : cities.join(` &mdash; `);
+};
+
+const getEventsStartEndDays = (events) => {
+  const sortedEvents = [...events].sort(sortByDay);
+
+  return [sortedEvents[0].datetime[0], sortedEvents[sortedEvents.length - 1].datetime[1]];
+};
+
 const createTripInfoTemplate = (cities = ``, firstDay, lastDay) => {
   const firstDate = dayjs(firstDay);
   const lastDate = dayjs(lastDay);
@@ -26,26 +54,13 @@ const createTripCostTemplate = (cost) => {
 };
 
 const createTripInfoContainerTemplate = (events) => {
-  const cost = events.reduce((fullSum, event) => {
-    const offersPrice = event.offers.reduce((sum, offer) => {
-      sum += offer.checked ? offer.price : 0;
-      return sum;
-    }, 0);
-
-    fullSum += (event.price + offersPrice);
-    return fullSum;
-  }, 0);
-
-  const sortedEvents = [...events].sort(sortByDay);
-
-  const firstDay = sortedEvents[0].datetime[0];
-  const lastDay = sortedEvents[sortedEvents.length - 1].datetime[1];
-
-  const cities = Array.from(new Set(events.map((event) => event.city))).join(` &mdash; `);
+  const cost = getEventsTotalCost(events);
+  const startEndDays = getEventsStartEndDays(events);
+  const cities = getEventsCitites(events);
 
   return (
     `<section class="trip-main__trip-info  trip-info">
-      ${createTripInfoTemplate(cities, firstDay, lastDay)}
+      ${createTripInfoTemplate(cities, startEndDays[0], startEndDays[1])}
       ${createTripCostTemplate(cost)}
     </section>`
   );
