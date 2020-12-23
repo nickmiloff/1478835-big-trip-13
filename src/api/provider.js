@@ -49,10 +49,9 @@ export default class Provider {
         });
     }
 
-    return init ? Promise.resolve(
-      this._store.getAdditionalDataByKey(AdditionalDataKeys.DESTINATIONS)
-    ) :
-    this._store.getAdditionalDataByKey(AdditionalDataKeys.DESTINATIONS);
+    return init ?
+      Promise.resolve(this._store.getAdditionalDataByKey(AdditionalDataKeys.DESTINATIONS)) :
+      this._store.getAdditionalDataByKey(AdditionalDataKeys.DESTINATIONS);
   }
 
   getOffers(init = false) {
@@ -64,10 +63,9 @@ export default class Provider {
         });
     }
 
-    return init ? Promise.resolve(
-      this._store.getAdditionalDataByKey(AdditionalDataKeys.OFFERS)
-    ) :
-    this._store.getAdditionalDataByKey(AdditionalDataKeys.OFFERS);
+    return init ?
+      Promise.resolve(this._store.getAdditionalDataByKey(AdditionalDataKeys.OFFERS)) :
+      this._store.getAdditionalDataByKey(AdditionalDataKeys.OFFERS);
   }
 
   getAllData() {
