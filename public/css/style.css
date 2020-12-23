@@ -1007,3 +1007,20 @@ main {
 
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }
+
+.offline-message {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: block;
+  padding: 1px 20px 2px;
+  border-bottom-left-radius: 23px;
+  border-bottom-right-radius: 23px;
+  text-align: center;
+  background-color: #E83151;
+  transform: translateX(-50%); }
+
+.offline-message__title {
+  margin: 0;
+  font-size: 17px;
+  line-height: 18px; }
