@@ -2,6 +2,7 @@ import {toHoursTimeDiff} from './datetime';
 import {SortType} from '../utils/const';
 
 export const sortByDay = (a, b) => Date.parse(a.datetime[0]) - Date.parse(b.datetime[0]);
+export const sortByLastDay = (a, b) => Date.parse(a.datetime[1]) - Date.parse(b.datetime[1]);
 const sortByTime = (a, b) => toHoursTimeDiff(a.datetime[0], b.datetime[0]);
 const sortByPrice = (a, b) => a.price - b.price;
 

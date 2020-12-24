@@ -25,8 +25,8 @@ export default class TripMenuView extends Component {
     const prevItem = this.getElement().querySelector(`.trip-tabs__btn--active`);
 
     if (item !== null && prevItem !== null) {
-      item.classList.add(`trip-tabs__btn--active`);
       prevItem.classList.remove(`trip-tabs__btn--active`);
+      item.classList.add(`trip-tabs__btn--active`);
     }
   }
 
