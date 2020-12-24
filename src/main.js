@@ -1,11 +1,12 @@
 import TripMenuView from './view/trip-menu';
+import OfflineMessageView from './view/offline-message';
 import EventsListPresenter from './presenter/events-list';
 import FiltersPresenter from './presenter/filters';
 import InfoPresenter from './presenter/info';
 import StatsPresenter from './presenter/stats';
 import EventsModel from './model/events';
 import FiltersModel from './model/filter';
-import {render, RenderPosition} from './utils/render';
+import {remove, render, RenderPosition} from './utils/render';
 import {MenuItem, UpdateType} from './utils/const';
 import {isOnline} from './utils/common';
 import {message} from './utils/message';
@@ -38,6 +39,7 @@ const filterPresenter = new FiltersPresenter(tripControlElement, filterModel, ev
 const infoPresenter = new InfoPresenter(tripMainElement, eventsModel, filterModel);
 const statsPresenter = new StatsPresenter(tripEventsContainerElement, eventsModel, filterModel);
 const tripMenuComponent = new TripMenuView();
+const offlineMessageComponent = new OfflineMessageView();
 
 const tripMenuClickHandler = (menuItem) => {
   switch (menuItem) {
@@ -98,9 +100,11 @@ window.addEventListener(`load`, () => {
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);
+  remove(offlineMessageComponent);
   apiWithProvider.sync();
 });
 
 window.addEventListener(`offline`, () => {
   document.title += ` [offline]`;
+  render(document.body, offlineMessageComponent);
 });

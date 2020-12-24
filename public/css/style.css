@@ -1008,19 +1008,27 @@ main {
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }
 
+.error-message,
 .offline-message {
   position: fixed;
   top: 0;
-  left: 50%;
   display: block;
   padding: 4px 34px 7px;
   border-bottom-left-radius: 34px;
-  border-bottom-right-radius: 34px;
   text-align: center;
-  background-color: #E83151;
+  background-color: #E83151; }
+
+.error-message {
+  left: 50%;
+  border-bottom-right-radius: 34px;
   transform: translateX(-50%); }
 
-.offline-message__title {
+.offline-message {
+  right: 0;
+  padding-right: 24px; }
+
+.offline-message__title,
+.error-message__title {
   margin: 0;
   font-size: 17px;
   line-height: 23px;

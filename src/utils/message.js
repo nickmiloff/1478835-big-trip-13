@@ -4,9 +4,9 @@ export const message = (msg) => {
   const messageContainer = document.createElement(`div`);
   const messageItem = document.createElement(`h2`);
 
-  messageContainer.classList.add(`offline-message`);
+  messageContainer.classList.add(`error-message`);
   messageItem.textContent = msg;
-  messageItem.classList.add(`offline-message__title`);
+  messageItem.classList.add(`error-message__title`);
 
   messageContainer.append(messageItem);
   document.body.append(messageContainer);
