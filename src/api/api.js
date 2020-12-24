@@ -1,11 +1,10 @@
-import EventsModel from './model/events';
-import {ApiMethod, SuccessHTTPStatusRange} from './utils/const';
+import EventsModel from '../model/events';
+import {ApiMethod, SuccessHTTPStatusRange} from '../utils/const';
 
 export default class Api {
-  constructor(endPoint, authorization, store) {
+  constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
-    this._store = store;
   }
 
   getEvents() {
@@ -22,24 +21,6 @@ export default class Api {
   getOffers() {
     return this._load({url: `offers`})
       .then(Api.toJSON);
-  }
-
-  getAllData() {
-    return Promise
-      .all([
-        this.getEvents(),
-        this.getDestinations(),
-        this.getOffers()
-      ])
-      .then(([events, destinations, offers]) => {
-        this._store.setDestinations(destinations);
-        this._store.setOffers(offers);
-        return events;
-      })
-      .catch(() => {
-        this._store.setDestinations([]);
-        this._store.setOffers([]);
-      });
   }
 
   addEvent(event) {
@@ -69,6 +50,16 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(EventsModel.adaptToClient);
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: ApiMethod.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 
   _load({

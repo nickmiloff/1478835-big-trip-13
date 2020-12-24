@@ -9,12 +9,11 @@ import {sortEvents} from '../utils/sort';
 import {UpdateType, UserAction, SortType, FilterType} from '../utils/const';
 
 export default class EventsListPresenter {
-  constructor(container, eventsModel, filterModel, api, store) {
+  constructor(container, eventsModel, filterModel, api) {
     this._container = container;
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
     this._api = api;
-    this._store = store;
 
     this._isLoading = true;
     this._eventPresenter = {};
@@ -47,8 +46,8 @@ export default class EventsListPresenter {
   }
 
   createEvent(callback) {
-    const destinations = this._store.getDestinations();
-    const offers = this._store.getOffers();
+    const destinations = this._api.getDestinations();
+    const offers = this._api.getOffers();
 
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -87,8 +86,8 @@ export default class EventsListPresenter {
 
   _renderEvent(event) {
     const eventPresenter = new EventPresenter(this._listComponent, this._viewActionHandler, this._modeChangeHandler, this._currentSortType);
-    const destinations = this._store.getDestinations();
-    const offers = this._store.getOffers();
+    const destinations = this._api.getDestinations();
+    const offers = this._api.getOffers();
 
     eventPresenter.init(event, destinations, offers);
     this._eventPresenter[event.id] = eventPresenter;
@@ -179,8 +178,8 @@ export default class EventsListPresenter {
   _modelEventHandler(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        const destinations = this._store.getDestinations();
-        const offers = this._store.getOffers();
+        const destinations = this._api.getDestinations();
+        const offers = this._api.getOffers();
 
         this._eventPresenter[data.id].init(data, destinations, offers);
         break;

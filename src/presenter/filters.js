@@ -1,6 +1,6 @@
 import TripFiltersView from '../view/trip-filters';
 import {render, replace, remove} from '../utils/render';
-import {UpdateType} from '../utils/const';
+import {UpdateType, FilterType} from '../utils/const';
 
 export default class FiltersPresenter {
   constructor(container, filterModel, eventsModel) {
@@ -9,6 +9,7 @@ export default class FiltersPresenter {
     this._eventsModel = eventsModel;
 
     this._currentFilter = null;
+    this._filtredEventsIsEmpty = null;
 
     this._filterComponent = null;
 
@@ -23,8 +24,9 @@ export default class FiltersPresenter {
     const prevFilterComponent = this._filterComponent;
 
     this._currentFilter = this._filterModel.getFilter();
+    this._filtredEventsIsEmpty = this._getFiltredEventsIsEmpty();
 
-    this._filterComponent = new TripFiltersView(this._currentFilter);
+    this._filterComponent = new TripFiltersView(this._currentFilter, this._filtredEventsIsEmpty);
     this._filterComponent.setFilterTypeChangeHandler(this._filterTypeChangeHandler);
 
     if (prevFilterComponent === null) {
@@ -34,6 +36,16 @@ export default class FiltersPresenter {
 
     replace(this._filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
+  }
+
+  _getFiltredEventsIsEmpty() {
+    const filtredEventsIsEmpty = {};
+
+    Object.values(FilterType).forEach((type) => {
+      filtredEventsIsEmpty[type] = this._eventsModel.getFiltredEvents(type).length > 0;
+    });
+
+    return filtredEventsIsEmpty;
   }
 
   _modelEventHandler() {

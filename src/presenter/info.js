@@ -16,11 +16,10 @@ export default class InfoPresenter {
   }
 
   init() {
+    const events = this._getEvents();
     const prevInfoComponent = this._infoComponent;
-    const filterType = this._filterModel.getFilter();
-    const filtredEvents = this._eventsModel.getFiltredEvents(filterType);
 
-    this._infoComponent = new TripInfoContainerView(filtredEvents);
+    this._infoComponent = new TripInfoContainerView(events);
 
     if (prevInfoComponent === null) {
       render(this._container, this._infoComponent, RenderPosition.AFTERBEGIN);
@@ -29,6 +28,13 @@ export default class InfoPresenter {
 
     replace(this._infoComponent, prevInfoComponent);
     remove(prevInfoComponent);
+  }
+
+  _getEvents() {
+    const filterType = this._filterModel.getFilter();
+    const filtredEvents = this._eventsModel.getFiltredEvents(filterType);
+
+    return filtredEvents;
   }
 
   _modelEventHandler() {

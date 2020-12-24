@@ -34,3 +34,7 @@ export const getRandomElementsFromArr = (arr, minCount = 0, maxCount = 10) => {
 
   return result;
 };
+
+export const isOnline = () => {
+  return window.navigator.onLine;
+};
