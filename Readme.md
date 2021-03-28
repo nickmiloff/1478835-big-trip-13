@@ -1,12 +1,8 @@
 # Проект «Большое путешествие»
 
 - SPA
-- React
-- Redux
-- Thunk
-- Axios
-- Jest (snapshots & e2e)
-- Reselect
+- MVP
+- ООП
 
 ---
 
